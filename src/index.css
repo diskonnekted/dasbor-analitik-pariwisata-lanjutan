@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&family=Playfair+Display:ital,wght@0,400;1,400;1,600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Utilities inti gaya hard-edge / neo-brutalist */
+@layer utilities {
+  .border-hd {
+    border: 1px solid #141414;
+  }
+  .border-hd-2 {
+    border: 2px solid #141414;
+  }
+  .border-hd-subtle {
+    border: 1px solid rgba(20, 20, 20, 0.15);
+  }
+  .shadow-hd {
+    box-shadow: 2px 2px 0px 0px #141414;
+  }
+  .shadow-hd-lg {
+    box-shadow: 4px 4px 0px 0px #141414;
+  }
+  .shadow-hd-blue {
+    box-shadow: 3px 3px 0px 0px #2563eb;
+  }
+}
+
+/* Leaflet Custom Styling Override for Neo-Brutalist look */
+.leaflet-container {
+  font-family: var(--font-mono);
+  background: #e5e7eb;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0px !important;
+  border: 2px solid #141414 !important;
+  box-shadow: 3px 3px 0px 0px #141414 !important;
+  padding: 0px !important;
+  background: #ffffff !important;
+}
+
+.leaflet-popup-content {
+  margin: 0px !important;
+}
+
+.leaflet-popup-tip-container {
+  display: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1ef;
+}
+::-webkit-scrollbar-thumb {
+  background: #141414;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
