@@ -294,6 +294,167 @@ export default function UMKMTrackerView() {
           ))}
         </div>
       </Panel>
+
+      {/* Sektor UMKM Pariwisata */}
+      <Panel title="Sektor UMKM Berbasis Pariwisata" subtitle="Distribusi UMKM berdasarkan ketergantungannya pada sektor wisata">
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            { sector: "Kuliner & Minuman", count: 45, icon: "🍜", description: "Warung, restoran, dawet, kuliner khas", dependency: 95 },
+            { sector: "Souvenir & Kerajinan", count: 18, icon: "🎁", description: "Batik, kerajinan tangan, oleh-oleh", dependency: 85 },
+            { sector: "Akomodasi", count: 12, icon: "🏨", description: "Homestay, hotel, glamping", dependency: 100 },
+            { sector: "Transportasi", count: 8, icon: "🚐", description: "Rental mobil, motor, guide", dependency: 90 },
+            { sector: "Agrowisata", count: 6, icon: "🌿", description: "Kebun teh, salak, kopi", dependency: 70 },
+            { sector: "Rekreasi & Olahraga", count: 5, icon: "🚣", description: "Rafting, trekking, camping", dependency: 100 },
+          ].map((item, idx) => (
+            <div key={idx} className="p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-shadow">
+              <div className="flex items-start gap-3">
+                <span className="text-3xl">{item.icon}</span>
+                <div className="flex-1">
+                  <p className="font-bold text-slate-800">{item.sector}</p>
+                  <p className="text-xs text-slate-600 mt-1">{item.description}</p>
+                  <div className="mt-2">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-slate-600">Dependency on Tourism</span>
+                      <span className="font-bold text-blue-600">{item.dependency}%</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all"
+                        style={{ width: `${item.dependency}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      {/* Multiplier Effect Calculator */}
+      <Panel title="Tourism Economic Multiplier Effect" subtitle="Estimasi dampak ekonomi pariwisata terhadap UMKM lokal">
+        <div className="grid md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-5 text-center">
+            <DollarSign className="w-10 h-10 text-blue-600 mx-auto mb-3" />
+            <p className="text-3xl font-bold text-blue-700">2.4x</p>
+            <p className="text-xs text-blue-600 mt-2">Multiplier Effect</p>
+            <p className="text-[11px] text-slate-600 mt-1">Setiap Rp1 kunjungan = Rp2.4 ekonomi lokal</p>
+          </div>
+          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl p-5 text-center">
+            <Users className="w-10 h-10 text-emerald-600 mx-auto mb-3" />
+            <p className="text-3xl font-bold text-emerald-700">5,850</p>
+            <p className="text-xs text-emerald-600 mt-2">Total UMKM 2025</p>
+            <p className="text-[11px] text-slate-600 mt-1">+370 UMKM baru dari 2024</p>
+          </div>
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-5 text-center">
+            <ShoppingBag className="w-10 h-10 text-amber-600 mx-auto mb-3" />
+            <p className="text-3xl font-bold text-amber-700">Rp 16.5 M</p>
+            <p className="text-xs text-amber-600 mt-2">PAD 2025</p>
+            <p className="text-[11px] text-slate-600 mt-1">+11.1% dari tahun sebelumnya</p>
+          </div>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-5 text-center">
+            <MapPin className="w-10 h-10 text-purple-600 mx-auto mb-3" />
+            <p className="text-3xl font-bold text-purple-700">1,820</p>
+            <p className="text-xs text-purple-600 mt-2">Ribu Kunjisan 2025</p>
+            <p className="text-[11px] text-slate-600 mt-1">+200 rb dari 2024</p>
+          </div>
+        </div>
+      </Panel>
+
+      {/* UMKM Near Destinations */}
+      <Panel title="Kepadatan UMKM per Destinasi Wisata" subtitle="Jumlah UMKM dalam radius 5km dari objek wisata utama">
+        <div className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={[
+              { destinasi: "Dieng Plateau", umkm: 45, wisatawan: 485000, ratio: 0.09 },
+              { destinasi: "Curug Pitu", umkm: 28, wisatawan: 120000, ratio: 0.23 },
+              { destinasi: "Arung Jeram", umkm: 35, wisatawan: 85000, ratio: 0.41 },
+              { destinasi: "Waduk Tampomas", umkm: 22, wisatawan: 38000, ratio: 0.58 },
+              { destinasi: "TRMS Zoo", umkm: 52, wisatawan: 150000, ratio: 0.35 },
+              { destinasi: "Desa Gumelem", umkm: 38, wisatawan: 65000, ratio: 0.58 },
+              { destinasi: "Kebun Teh", umkm: 18, wisatawan: 54000, ratio: 0.33 },
+              { destinasi: "Waduk Mrica", umkm: 25, wisatawan: 42000, ratio: 0.60 },
+            ]} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="destinasi" tick={{ fontSize: 11 }} angle={-30} textAnchor="end" height={80} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload[0]) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-sm">
+                        <p className="font-bold text-slate-800">{data.destinasi}</p>
+                        <p className="text-slate-600">UMKM: <span className="font-bold">{data.umkm}</span></p>
+                        <p className="text-slate-600">Wisatawan: <span className="font-bold">{(data.wisatawan / 1000).toFixed(0)}k</span></p>
+                        <p className="text-blue-600">Rasio: <span className="font-bold">{data.ratio}</span> UMKM per 1rb wisatawan</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Bar dataKey="umkm" name="Jumlah UMKM" fill="#059669" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Panel>
+
+      {/* Tourism Spending Distribution */}
+      <Panel title="Distribusi Pengeluaran Wisatawan per Sektor UMKM" subtitle="Estimasi sebaran budget wisatawan ke UMKM lokal">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={[
+                { category: "Akomodasi", percentage: 32, icon: "🏨" },
+                { category: "Kuliner", percentage: 25, icon: "🍜" },
+                { category: "Transportasi", percentage: 18, icon: "🚐" },
+                { category: "Souvenir", percentage: 12, icon: "🎁" },
+                { category: "Tiket & Rekreasi", percentage: 8, icon: "🎫" },
+                { category: "Lainnya", percentage: 5, icon: "💡" },
+              ]} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="category" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip
+                  formatter={(value) => [`${value}%`, "Pengeluaran"]}
+                />
+                <Bar dataKey="percentage" name="Persentase" radius={[6, 6, 0, 0]}>
+                  {[32, 25, 18, 12, 8, 5].map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={['#1e40af', '#059669', '#d97706', '#7c3aed', '#dc2626', '#64748b'][index]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="space-y-3">
+            {[
+              { sector: "Akomodasi", pct: 32, avg: "Rp 450.000/orang/malam", desc: "Hotel, homestay, glamping, resort" },
+              { sector: "Kuliner", pct: 25, avg: "Rp 150.000/orang/hari", desc: "Warung, restoran, dawet, oleh-oleh kuliner" },
+              { sector: "Transportasi", pct: 18, avg: "Rp 200.000/orang/trip", desc: "Rental, ojek, guide, shuttle" },
+              { sector: "Souvenir", pct: 12, avg: "Rp 100.000/orang", desc: "Batik, kerajinan, produk lokal" },
+              { sector: "Tiket & Rekreasi", pct: 8, avg: "Rp 75.000/orang", desc: "Tiket masuk, rafting, trekking" },
+              { sector: "Lainnya", pct: 5, avg: "Rp 50.000/orang", desc: "Laundry, SIM, pulsa, lainnya" },
+            ].map((item, idx) => (
+              <div key={idx} className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-sm">
+                    {[0,1,2,3,4,5][idx]}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center">
+                      <p className="font-semibold text-slate-800 text-sm">{item.sector}</p>
+                      <span className="text-xs font-bold text-blue-600">{item.pct}%</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600">{item.desc}</p>
+                    <p className="text-[11px] text-slate-500 mt-1">Avg: {item.avg}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Panel>
     </div>
   );
 }

@@ -29,6 +29,7 @@ import {
   ShieldAlert,
   Sliders,
   Sparkles,
+  ShoppingCart,
   Star,
   TrendingUp,
   Users,
