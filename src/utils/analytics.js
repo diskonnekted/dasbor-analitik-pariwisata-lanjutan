@@ -140,3 +140,200 @@ export function prepareTourismRadarData(rowA, rowB) {
     [nameB]: normalizeB[sub.key],
   }));
 }
+
+// ============================================
+// WEATHER & CUACA ANALYTICS (Fitur 1)
+// ============================================
+
+/**
+ * Weather Suitability Score per kecamatan per bulan
+ * Bobot: Curah Hujan (30%), Hari Hujan (20%), Penyinaran (50%)
+ */
+export function calculateWeatherSuitability(kecamatan, bulanIndex) {
+  // Simulasi data curah hujan berdasarkan zona cuaca kecamatan
+  const baseRainfall = {
+    "Batur": 380, // Highland - lebih tinggi
+    "Banjarnegara": 2400,
+    "Sigaluh": 2500,
+    "Madukara": 2600,
+    "Pagedongan": 2800,
+  };
+
+  const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const rainfallPattern = [0.18, 0.16, 0.14, 0.10, 0.06, 0.03, 0.02, 0.02, 0.03, 0.06, 0.10, 0.16]; // Distribusi bulanan
+  
+  const annualRain = baseRainfall[kecamatan] || 2400;
+  const monthlyRain = annualRain * rainfallPattern[bulanIndex];
+  const rainyDays = Math.round(monthlyRain / 18); // Est: 18mm/hari hujan
+  const sunshineHours = Math.max(4, 9 - (rainyDays / 18) * 5);
+
+  // Normalisasi (0-100)
+  const rainScore = Math.max(0, 100 - (monthlyRain / 320) * 100);
+  const daysScore = Math.max(0, 100 - (rainyDays / 20) * 100);
+  const sunshineScore = Math.min(100, (sunshineHours / 9.1) * 100);
+
+  // Weighted composite
+  const weatherScore = (rainScore * 0.3) + (daysScore * 0.2) + (sunshineScore * 0.5);
+
+  return {
+    kecamatan,
+    bulan: bulanNama[bulanIndex],
+    monthlyRainfall: Math.round(monthlyRain),
+    rainyDays,
+    sunshineHours: sunshineHours.toFixed(1),
+    weatherScore: Math.round(weatherScore),
+    rating: weatherScore >= 80 ? "Excellent" : weatherScore >= 60 ? "Good" : weatherScore >= 40 ? "Fair" : "Poor"
+  };
+}
+
+/**
+ * Outdoor Activity Risk Assessment per bulan
+ */
+export function getOutdoorActivityRiskLevel(bulanIndex) {
+  const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const rainyDaysPattern = [18, 17, 16, 12, 8, 5, 3, 3, 4, 9, 14, 18];
+  
+  const rainyDays = rainyDaysPattern[bulanIndex];
+  
+  let riskLevel, riskIcon, riskColor, riskDescription;
+  
+  if (rainyDays <= 5) {
+    riskLevel = "Low";
+    riskIcon = "🟢";
+    riskColor = "text-emerald-700";
+    riskDescription = "Ideal untuk semua aktivitas outdoor";
+  } else if (rainyDays <= 10) {
+    riskLevel = "Moderate";
+    riskIcon = "🟡";
+    riskColor = "text-amber-700";
+    riskDescription = "Siapkan raincoat, sebagian besar aktivitas outdoor masih aman";
+  } else {
+    riskLevel = "High";
+    riskIcon = "🔴";
+    riskColor = "text-red-700";
+    riskDescription = "Curah hujan tinggi, aktivitas outdoor berisiko";
+  }
+
+  return {
+    bulan: bulanNama[bulanIndex],
+    rainyDays,
+    riskLevel,
+    riskIcon,
+    riskColor,
+    riskDescription,
+    recommendedActivities: rainyDays <= 5 
+      ? ["Rafting", "Trekking", "Camping", "Sunrise View"]
+      : rainyDays <= 10
+        ? ["Rafting", "Wisata Kawah", "Desa Budaya"]
+        : ["Wisata Kuliner", "Zoo", "Museum", "Kuliner Dawet Ayu"]
+  };
+}
+
+/**
+ * Season Classification
+ */
+export function getClassifySeason(bulanIndex) {
+  const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const rainyDaysPattern = [18, 17, 16, 12, 8, 5, 3, 3, 4, 9, 14, 18];
+  
+  const rainyDays = rainyDaysPattern[bulanIndex];
+  
+  let season, seasonIcon, seasonColor;
+  
+  if (rainyDays > 15) {
+    season = "Musim Hujan";
+    seasonIcon = "🌧️";
+    seasonColor = "text-blue-700";
+  } else if (rainyDays < 5) {
+    season = "Musim Kemarau";
+    seasonIcon = "☀️";
+    seasonColor = "text-amber-700";
+  } else {
+    season = "Pancaroba";
+    seasonIcon = "⛅";
+    seasonColor = "text-green-700";
+  }
+
+  return {
+    bulan: bulanNama[bulanIndex],
+    season,
+    seasonIcon,
+    seasonColor
+  };
+}
+
+/**
+ * Best Time to Visit Recommendation
+ */
+export function getBestTimeToVisit() {
+  const bestMonths = [5, 6, 7, 8, 9]; // Jun-Sep (musim kemarau)
+  const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  
+  return bestMonths.map(idx => ({
+    bulan: bulanNama[idx],
+    reason: idx === 6 || idx === 7 ? "Paling kering & cerah (3-4 hari hujan/bulan)" : "Musim kemarau, cocok untuk outdoor"
+  }));
+}
+
+/**
+ * Activity Recommendation per bulan
+ */
+export function getActivityRecommendation(bulanIndex) {
+  const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const rainyDaysPattern = [18, 17, 16, 12, 8, 5, 3, 3, 4, 9, 14, 18];
+  const penyinaranPattern = [5.2, 5.8, 6.1, 7.0, 7.8, 8.2, 8.9, 9.1, 8.5, 7.5, 6.3, 5.0];
+  
+  const rainyDays = rainyDaysPattern[bulanIndex];
+  const sunshine = penyinaranPattern[bulanIndex];
+  const bulan = bulanNama[bulanIndex];
+  
+  const activities = [];
+  
+  if (rainyDays <= 5) {
+    activities.push({ name: "Rafting Sungai Serayu", icon: "🚣", confidence: 95 });
+    activities.push({ name: "Trekking Curug Pitu", icon: "🥾", confidence: 90 });
+    activities.push({ name: "Camping Dieng Plateau", icon: "⛺", confidence: 95 });
+  } else if (rainyDays <= 10) {
+    activities.push({ name: "Rafting Sungai Serayu", icon: "🚣", confidence: 75 });
+    activities.push({ name: "Wisata Kawah Sikidang", icon: "🌋", confidence: 85 });
+    activities.push({ name: "Desa Wisata Batik Gumelem", icon: "🎨", confidence: 90 });
+  } else {
+    activities.push({ name: "Wisata Kuliner Dawet Ayu", icon: "🍜", confidence: 95 });
+    activities.push({ name: "TRMS Serulingmas Zoo", icon: "🦁", confidence: 90 });
+    activities.push({ name: "Museum & Galeri Dieng", icon: "🏛️", confidence: 85 });
+  }
+  
+  if (sunshine >= 7) {
+    activities.push({ name: "Sunrise Candi Arjuna", icon: "🌅", confidence: 95 });
+  }
+  
+  return { bulan, activities: activities.slice(0, 4) };
+}
+
+/**
+ * Weather-based Carrying Capacity Adjustment
+ * Musim hujan = kapasitas lebih rendah (jalan licin, risiko longsor)
+ */
+export function calculateWeatherAdjustedCapacity(kecData) {
+  if (!kecData) return null;
+  
+  const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const rainyDaysPattern = [18, 17, 16, 12, 8, 5, 3, 3, 4, 9, 14, 18];
+  
+  const adjustments = bulanNama.map((bulan, idx) => {
+    const rainyDays = rainyDaysPattern[idx];
+    const capacityFactor = rainyDays <= 5 ? 1.1 : rainyDays <= 10 ? 1.0 : 0.85; // Hujan tinggi = kapasitas turun 15%
+    const adjustedCapacity = Math.round((kecData.carryingCapacityMax || 5000) * capacityFactor);
+    
+    return {
+      bulan,
+      rainyDays,
+      capacityFactor: capacityFactor.toFixed(2),
+      originalCapacity: kecData.carryingCapacityMax,
+      adjustedCapacity,
+      impact: rainyDays > 15 ? "Turun 15% (hujan tinggi)" : rainyDays < 5 ? "Naik 10% (cuaca ideal)" : "Stabil"
+    };
+  });
+  
+  return { kecamatan: kecData.kecamatan, monthlyAdjustments: adjustments };
+}

@@ -5,6 +5,7 @@ import {
   ArrowRight,
   Briefcase,
   Calendar,
+  CloudSun,
   Compass,
   Database,
   DollarSign,
@@ -68,6 +69,7 @@ import { CagarBudayaView } from "./components/CagarBudayaView";
 import { InvestorAnalyticsView } from "./components/InvestorAnalyticsView";
 import { AdditionalDestinationsView } from "./components/AdditionalDestinationsView";
 import { AdvancedAnalyticsView } from "./components/AdvancedAnalyticsView";
+import SmartWeatherView from "./components/SmartWeatherView";
 import {
   dataAkomodasi,
   kalenderEvent,
@@ -304,6 +306,9 @@ function App() {
           </TabButton>
           <TabButton active={activeTab === "opendata"} onClick={() => setActiveTab("opendata")} icon={Database}>
             07. Wisata Lainnya
+          </TabButton>
+          <TabButton active={activeTab === "weather"} onClick={() => setActiveTab("weather")} icon={CloudSun}>
+            08. Smart Weather
           </TabButton>
         </div>
 
@@ -900,6 +905,15 @@ function App() {
         {activeTab === "opendata" && (
           <Suspense fallback={<div className="p-8 bg-white border border-slate-200 rounded-xl text-center font-mono text-xs font-semibold">Memuat Wisata OpenData...</div>}>
             <AdditionalDestinationsView />
+          </Suspense>
+        )}
+
+        {/* ==========================================
+            TAB 08: SMART WEATHER DASHBOARD
+        =========================================== */}
+        {activeTab === "weather" && (
+          <Suspense fallback={<div className="p-8 bg-white border border-slate-200 rounded-xl text-center font-mono text-xs font-semibold">Memuat Weather Dashboard...</div>}>
+            <SmartWeatherView />
           </Suspense>
         )}
       </main>
