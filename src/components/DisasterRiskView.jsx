@@ -22,6 +22,7 @@ import {
   Cell,
   AreaChart,
   Area,
+  Line,
 } from "recharts";
 import { Panel, SectionTitle } from "./ui";
 import { longsorPerKecamatan, trenLongsorTahunan, destinasiZonaRawan, getRiskLevel } from "../data/bpbdData";
