@@ -27,6 +27,7 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  Cell,
   LineChart,
   Line,
   Area,
@@ -250,46 +251,93 @@ export default function SmartWeatherView() {
         </div>
       </Panel>
 
-      {/* Outdoor Risk & Season */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Outdoor Activity Risk */}
-        <Panel title="Risiko Aktivitas Outdoor" subtitle="Berdasarkan jumlah hari hujan per bulan">
-          <div className="space-y-3">
-            {outdoorRiskData.map((risk, idx) => (
-              <div key={risk.bulan} className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:bg-slate-50">
-                <div className="flex items-center gap-3">
-                  <span className="text-lg font-semibold text-slate-700 w-10">{risk.bulan}</span>
-                  <span>{risk.riskIcon}</span>
-                  <span className="text-sm text-slate-600">{risk.rainyDays} hari hujan</span>
+      {/* Outdoor Risk & Season - Calendar Grid */}
+      <Panel title="Kalender Cuaca & Risiko Outdoor" subtitle="Visualisasi 12 bulan — hujan, risiko aktivitas, dan klasifikasi musim">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {outdoorRiskData.map((risk, idx) => {
+            const season = seasonData[idx];
+            const isCurrentMonth = idx === new Date().getMonth();
+            
+            return (
+              <div
+                key={risk.bulan}
+                className={`relative p-4 rounded-xl border-2 transition-all hover:shadow-lg hover:scale-105 cursor-default ${
+                  isCurrentMonth
+                    ? "ring-2 ring-blue-500 ring-offset-2 border-blue-300"
+                    : "border-slate-200"
+                } ${risk.rainyDays <= 5 ? "bg-gradient-to-br from-emerald-50 to-emerald-100" : risk.rainyDays <= 10 ? "bg-gradient-to-br from-amber-50 to-amber-100" : "bg-gradient-to-br from-red-50 to-red-100"}`}
+              >
+                {/* Month Label */}
+                <div className="text-center mb-3">
+                  <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
+                    isCurrentMonth ? "bg-blue-600 text-white" : "bg-white/80 text-slate-700"
+                  }`}>
+                    {risk.bulan}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${riskBgMap[risk.riskLevel]} ${riskColorMap[risk.riskLevel]}`}>
+
+                {/* Risk Icon */}
+                <div className="text-center mb-2">
+                  <span className="text-3xl block">{risk.riskIcon}</span>
+                </div>
+
+                {/* Rainy Days */}
+                <div className="text-center mb-2">
+                  <p className="text-2xl font-bold text-slate-800">{risk.rainyDays}</p>
+                  <p className="text-xs text-slate-600">hari hujan</p>
+                </div>
+
+                {/* Risk Level Badge */}
+                <div className="text-center mb-2">
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-bold ${riskBgMap[risk.riskLevel]} ${riskColorMap[risk.riskLevel]}`}>
                     {risk.riskLevel}
                   </span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </Panel>
 
-        {/* Season Classification */}
-        <Panel title="Klasifikasi Musim" subtitle="Hujan (>15 hari) = Hujan, <5 hari = Kemarau">
-          <div className="space-y-3">
-            {seasonData.map((s) => (
-              <div key={s.bulan} className="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50">
-                <span className="text-lg font-semibold text-slate-700 w-10">{s.bulan}</span>
-                <span>{s.icon}</span>
-                <div className="flex-1">
-                  <span className={`text-sm font-semibold ${s.season === "Musim Hujan" ? "text-blue-700" : s.season === "Musim Kemarau" ? "text-amber-700" : "text-green-700"}`}>
-                    {s.season}
-                  </span>
+                {/* Season Indicator */}
+                <div className="text-center pt-2 border-t border-slate-200/50">
+                  <span className="text-lg">{season.icon}</span>
+                  <p className={`text-[10px] font-semibold mt-1 ${
+                    season.season === "Musim Hujan" ? "text-blue-700" :
+                    season.season === "Musim Kemarau" ? "text-amber-700" :
+                    "text-green-700"
+                  }`}>
+                    {season.season}
+                  </p>
                 </div>
-                <div className={`w-3 h-3 rounded-full ${SEASON_COLORS[s.season]}`} />
               </div>
-            ))}
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="mt-6 flex flex-wrap gap-4 text-xs text-slate-600 justify-center">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🟢</span>
+            <span>Low Risk (≤5 hari hujan)</span>
           </div>
-        </Panel>
-      </div>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🟡</span>
+            <span>Moderate (6-10 hari hujan)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🔴</span>
+            <span>High Risk ({">"}10 hari hujan)</span>
+          </div>
+          <div className="flex items-center gap-2 ml-4 pl-4 border-l border-slate-300">
+            <span className="text-2xl">🌧️</span>
+            <span className="text-blue-700 font-semibold">Musim Hujan</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">☀️</span>
+            <span className="text-amber-700 font-semibold">Musim Kemarau</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">⛅</span>
+            <span className="text-green-700 font-semibold">Pancaroba</span>
+          </div>
+        </div>
+      </Panel>
 
       {/* Best Time to Visit */}
       <Panel title="Best Time to Visit" subtitle={`Rekomendasi waktu terbaik untuk ${selectedKecamatan}`}>
@@ -325,10 +373,10 @@ export default function SmartWeatherView() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {activityRec.activities.map((act, idx) => (
+          {activityRec.map((act, idx) => (
             <div key={idx} className="p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-shadow">
               <div className="text-3xl mb-2">{act.icon}</div>
-              <p className="font-semibold text-slate-800 text-sm">{act.name}</p>
+              <p className="font-semibold text-slate-800 text-sm">{act.activity}</p>
               <p className="text-xs text-slate-500 mt-1">Confidence: {act.confidence}%</p>
             </div>
           ))}

@@ -19,85 +19,29 @@ export const curahHujanBulanan = [
   { bulan: "Des", curahHujan: 300, hariHujan: 18, penyinaran: 5.0 },
 ];
 
-// Data per kecamatan (representasi dari stasiun BMKG terdekat)
+// Data per kecamatan (20 Kecamatan Kabupaten Banjarnegara)
+// Data curah hujan estimasi berdasarkan elevasi & topografi
 export const cuacaPerKecamatan = [
-  {
-    kecamatan: "Batur",
-    elevasi: "1400-2000 mdpl",
-    curahHujanAvg: 380, // mm/tahun (lebih tinggi karena dieng plateau)
-    musimHujan: "Nov-Apr",
-    musimKemarau: "May-Okt",
-    suhuRata2: "16-22°C",
-    kelembaban: "78%",
-    zonaCuaca: "Highland",
-    rekomendasi: "Siapkan jaket tebal, cuaca bisa dingin terutama pagi hari"
-  },
-  {
-    kecamatan: "Banjarnegara",
-    elevasi: "400-600 mdpl",
-    curahHujanAvg: 2400,
-    musimHujan: "Nov-Apr",
-    musimKemarau: "May-Okt",
-    suhuRata2: "24-32°C",
-    kelembaban: "72%",
-    zonaCuaca: "Lowland",
-    rekomendasi: "Cuaca tropis biasa, siapkan sunscreen"
-  },
-  {
-    kecamatan: "Susukan",
-    elevasi: "500-700 mdpl",
-    curahHujanAvg: 2300,
-    musimHujan: "Nov-Apr",
-    musimKemarau: "May-Okt",
-    suhuRata2: "23-30°C",
-    kelembaban: "70%",
-    zonaCuaca: "Lowland",
-    rekomendasi: "Cuaca tropis, siapkan sunscreen"
-  },
-  {
-    kecamatan: "Sigaluh",
-    elevasi: "600-900 mdpl",
-    curahHujanAvg: 2500,
-    musimHujan: "Nov-Apr",
-    musimKemarau: "May-Okt",
-    suhuRata2: "22-29°C",
-    kelembaban: "74%",
-    zonaCuaca: "Midland",
-    rekomendasi: "Hujan cukup tinggi, siapkan raincoat untuk trekking"
-  },
-  {
-    kecamatan: "Madukara",
-    elevasi: "500-800 mdpl",
-    curahHujanAvg: 2600,
-    musimHujan: "Nov-Apr",
-    musimKemarau: "May-Okt",
-    suhuRata2: "23-30°C",
-    kelembaban: "76%",
-    zonaCuaca: "Midland",
-    rekomendasi: "Rawan longsor musim hujan, cek kondisi jalan sebelum traveling"
-  },
-  {
-    kecamatan: "Pagedongan",
-    elevasi: "700-1100 mdpl",
-    curahHujanAvg: 2800,
-    musimHujan: "Nov-Apr",
-    musimKemarau: "May-Okt",
-    suhuRata2: "21-28°C",
-    kelembaban: "78%",
-    zonaCuaca: "Midland",
-    rekomendasi: "Curah hujan tinggi, rawan longsor"
-  },
-  {
-    kecamatan: "Pandansari",
-    elevasi: "400-600 mdpl",
-    curahHujanAvg: 2400,
-    musimHujan: "Nov-Apr",
-    musimKemarau: "May-Okt",
-    suhuRata2: "24-32°C",
-    kelembaban: "72%",
-    zonaCuaca: "Lowland",
-    rekomendasi: "Cuaca tropis biasa"
-  }
+  { kecamatan: "Batur", elevasi: "1400-2000 mdpl", curahHujanAvg: 2800, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "16-22°C", kelembaban: "78%", zonaCuaca: "Highland", rekomendasi: "Siapkan jaket tebal, cuaca dingin terutama pagi hari" },
+  { kecamatan: "Banjarnegara", elevasi: "400-600 mdpl", curahHujanAvg: 2400, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "24-32°C", kelembaban: "72%", zonaCuaca: "Lowland", rekomendasi: "Cuaca tropis biasa, siapkan sunscreen" },
+  { kecamatan: "Susukan", elevasi: "500-700 mdpl", curahHujanAvg: 2300, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "23-30°C", kelembaban: "70%", zonaCuaca: "Lowland", rekomendasi: "Cuaca tropis, siapkan sunscreen" },
+  { kecamatan: "Banjarmangu", elevasi: "600-900 mdpl", curahHujanAvg: 2700, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "21-28°C", kelembaban: "76%", zonaCuaca: "Midland", rekomendasi: "Hujan cukup tinggi, siapkan raincoat" },
+  { kecamatan: "Wanayasa", elevasi: "500-800 mdpl", curahHujanAvg: 2400, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "22-30°C", kelembaban: "73%", zonaCuaca: "Midland", rekomendasi: "Cuaca tropis, agrowisata cocok kemarau" },
+  { kecamatan: "Pejawaran", elevasi: "700-1000 mdpl", curahHujanAvg: 2600, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "20-28°C", kelembaban: "75%", zonaCuaca: "Midland", rekomendasi: "Rawan kabut, siapkan jas hujan" },
+  { kecamatan: "Sigaluh", elevasi: "600-900 mdpl", curahHujanAvg: 2500, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "22-29°C", kelembaban: "74%", zonaCuaca: "Midland", rekomendasi: "Hujan cukup tinggi, siapkan raincoat untuk trekking" },
+  { kecamatan: "Madukara", elevasi: "500-800 mdpl", curahHujanAvg: 2600, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "23-30°C", kelembaban: "76%", zonaCuaca: "Midland", rekomendasi: "Rawan longsor musim hujan, cek kondisi jalan" },
+  { kecamatan: "Purwanegara", elevasi: "500-700 mdpl", curahHujanAvg: 2300, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "23-30°C", kelembaban: "71%", zonaCuaca: "Lowland", rekomendasi: "Cuaca tropis biasa" },
+  { kecamatan: "Mandiraja", elevasi: "400-600 mdpl", curahHujanAvg: 2200, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "24-31°C", kelembaban: "70%", zonaCuaca: "Lowland", rekomendasi: "Cuaca tropis, siapkan sunscreen" },
+  { kecamatan: "Bawang", elevasi: "400-600 mdpl", curahHujanAvg: 2300, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "24-32°C", kelembaban: "72%", zonaCuaca: "Lowland", rekomendasi: "Agrowisata salak, cocok musim kemarau" },
+  { kecamatan: "Kalibening", elevasi: "500-700 mdpl", curahHujanAvg: 2400, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "23-30°C", kelembaban: "72%", zonaCuaca: "Lowland", rekomendasi: "Cuaca tropis biasa" },
+  { kecamatan: "Karangkobar", elevasi: "600-800 mdpl", curahHujanAvg: 2500, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "22-29°C", kelembaban: "74%", zonaCuaca: "Midland", rekomendasi: "Hujan cukup tinggi, siapkan raincoat" },
+  { kecamatan: "Pagedongan", elevasi: "700-1100 mdpl", curahHujanAvg: 2800, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "21-28°C", kelembaban: "78%", zonaCuaca: "Midland", rekomendasi: "Curah hujan tinggi, rawan longsor" },
+  { kecamatan: "Punggelan", elevasi: "600-900 mdpl", curahHujanAvg: 2600, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "22-29°C", kelembaban: "75%", zonaCuaca: "Midland", rekomendasi: "Hujan cukup tinggi, siapkan raincoat" },
+  { kecamatan: "Pandanarum", elevasi: "700-1100 mdpl", curahHujanAvg: 2700, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "21-28°C", kelembaban: "77%", zonaCuaca: "Midland", rekomendasi: "Curah hujan tinggi, rawan longsor" },
+  { kecamatan: "Wanadadi", elevasi: "500-700 mdpl", curahHujanAvg: 2300, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "23-30°C", kelembaban: "72%", zonaCuaca: "Lowland", rekomendasi: "Wisata Waduk Mrica, cocok kemarau" },
+  { kecamatan: "Rakit", elevasi: "500-700 mdpl", curahHujanAvg: 2400, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "23-30°C", kelembaban: "72%", zonaCuaca: "Lowland", rekomendasi: "Cuaca tropis biasa" },
+  { kecamatan: "Pagentan", elevasi: "900-1200 mdpl", curahHujanAvg: 2600, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "19-26°C", kelembaban: "77%", zonaCuaca: "Midland", rekomendasi: "Dataran tinggi Dieng, suhu dingin" },
+  { kecamatan: "Purwareja Klampok", elevasi: "400-600 mdpl", curahHujanAvg: 2200, musimHujan: "Nov-Apr", musimKemarau: "May-Okt", suhuRata2: "24-31°C", kelembaban: "70%", zonaCuaca: "Lowland", rekomendasi: "Cuaca tropis, akses jalan strategis" }
 ];
 
 // Best Time to Visit per kecamatan (berdasarkan data BMKG)

@@ -5,6 +5,8 @@ import {
   ArrowRight,
   Briefcase,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
   CloudSun,
   Compass,
   Database,
@@ -18,17 +20,20 @@ import {
   Layers,
   Map,
   MapPin,
+  Mountain,
   Printer,
   Radar,
   Radio,
   Route as RouteIcon,
   Search,
+  ShieldAlert,
   Sliders,
   Sparkles,
   Star,
   TrendingUp,
   Users,
   Utensils,
+  X,
   Zap,
 } from "lucide-react";
 import {
@@ -70,6 +75,7 @@ import { InvestorAnalyticsView } from "./components/InvestorAnalyticsView";
 import { AdditionalDestinationsView } from "./components/AdditionalDestinationsView";
 import { AdvancedAnalyticsView } from "./components/AdvancedAnalyticsView";
 import SmartWeatherView from "./components/SmartWeatherView";
+import DisasterRiskView from "./components/DisasterRiskView";
 import {
   dataAkomodasi,
   kalenderEvent,
@@ -93,6 +99,7 @@ import {
 
 function App() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [query, setQuery] = useState("");
   const [selectedKec, setSelectedKec] = useState("Semua");
   const [selectedKategori, setSelectedKategori] = useState("Semua");
@@ -105,6 +112,18 @@ function App() {
   const [calcSpending, setCalcSpending] = useState(300000);
 
   const [selectedRouteId, setSelectedRouteId] = useState(null);
+
+  const tabs = [
+    { key: "overview", label: "Dashboard Utama", icon: Layers },
+    { key: "advanced", label: "Analisa Lanjutan", icon: TrendingUp },
+    { key: "routes", label: "Peta Tematik", icon: RouteIcon },
+    { key: "events", label: "Event & Rekomendasi", icon: Calendar },
+    { key: "cagarbudaya", label: "Cagar Budaya", icon: Landmark },
+    { key: "investor", label: "Investasi", icon: Briefcase },
+    { key: "opendata", label: "Wisata Lainnya", icon: Database },
+    { key: "weather", label: "Smart Weather", icon: CloudSun },
+    { key: "disaster", label: "Bencana & Risiko", icon: AlertTriangle },
+  ];
 
   const handlePrintRecommendations = () => {
     const printContent = document.getElementById("recommendations-container");
@@ -201,7 +220,49 @@ function App() {
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-600 selection:text-white flex flex-col justify-between">
       <Header onPrint={() => window.print()} />
 
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="flex h-[calc(100vh-80px)] overflow-hidden">
+        {/* SIDEBAR NAVIGATION */}
+        <aside className={`${sidebarOpen ? "w-64" : "w-16"} bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out flex-shrink-0`}>
+          {/* Sidebar Header */}
+          <div className="p-3 border-b border-slate-200 flex items-center justify-between">
+            {sidebarOpen && (
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Navigasi</span>
+            )}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+              title={sidebarOpen ? "Tutup sidebar" : "Buka sidebar"}
+            >
+              {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+            </button>
+          </div>
+
+          {/* Tab Buttons */}
+          <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                    isActive
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  }`}
+                  title={!sidebarOpen ? tab.label : undefined}
+                >
+                  <Icon size={18} className="flex-shrink-0" />
+                  {sidebarOpen && <span className="truncate">{tab.label}</span>}
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        {/* MAIN CONTENT */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6">
         {/* ==========================================
             BANNER HERO INTRO
         =========================================== */}
@@ -280,36 +341,6 @@ function App() {
               </select>
             </div>
           </div>
-        </div>
-
-        {/* ==========================================
-            TAB NAVIGATION
-        =========================================== */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")} icon={Layers}>
-            01. Dashboard Utama
-          </TabButton>
-          <TabButton active={activeTab === "advanced"} onClick={() => setActiveTab("advanced")} icon={TrendingUp}>
-            02. Analisa Lanjutan
-          </TabButton>
-          <TabButton active={activeTab === "routes"} onClick={() => setActiveTab("routes")} icon={RouteIcon}>
-            03. Peta Tematik
-          </TabButton>
-          <TabButton active={activeTab === "events"} onClick={() => setActiveTab("events")} icon={Calendar}>
-            04. Event & Rekomendasi
-          </TabButton>
-          <TabButton active={activeTab === "cagarbudaya"} onClick={() => setActiveTab("cagarbudaya")} icon={Landmark}>
-            05. Cagar Budaya
-          </TabButton>
-          <TabButton active={activeTab === "investor"} onClick={() => setActiveTab("investor")} icon={Briefcase}>
-            06. Investasi
-          </TabButton>
-          <TabButton active={activeTab === "opendata"} onClick={() => setActiveTab("opendata")} icon={Database}>
-            07. Wisata Lainnya
-          </TabButton>
-          <TabButton active={activeTab === "weather"} onClick={() => setActiveTab("weather")} icon={CloudSun}>
-            08. Smart Weather
-          </TabButton>
         </div>
 
         {/* ==========================================
@@ -916,7 +947,14 @@ function App() {
             <SmartWeatherView />
           </Suspense>
         )}
-      </main>
+
+        {activeTab === "disaster" && (
+          <Suspense fallback={<div className="p-8 bg-white border border-slate-200 rounded-xl text-center font-mono text-xs font-semibold">Memuat Disaster Risk Dashboard...</div>}>
+            <DisasterRiskView />
+          </Suspense>
+        )}
+        </div>
+      </div>
 
       {selectedDestinasiModal && (
         <DestinasiDetailModal

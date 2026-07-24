@@ -152,11 +152,11 @@ export function prepareTourismRadarData(rowA, rowB) {
 export function calculateWeatherSuitability(kecamatan, bulanIndex) {
   // Simulasi data curah hujan berdasarkan zona cuaca kecamatan
   const baseRainfall = {
-    "Batur": 380, // Highland - lebih tinggi
-    "Banjarnegara": 2400,
-    "Sigaluh": 2500,
-    "Madukara": 2600,
-    "Pagedongan": 2800,
+    "Batur": 2800, "Banjarnegara": 2400, "Susukan": 2300, "Banjarmangu": 2700,
+    "Wanayasa": 2400, "Pejawaran": 2600, "Sigaluh": 2500, "Madukara": 2600,
+    "Purwanegara": 2300, "Mandiraja": 2200, "Bawang": 2300, "Kalibening": 2400,
+    "Karangkobar": 2500, "Pagedongan": 2800, "Punggelan": 2600, "Pandanarum": 2700,
+    "Wanadadi": 2300, "Rakit": 2400, "Pagentan": 2600, "Purwareja Klampok": 2200,
   };
 
   const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -336,4 +336,136 @@ export function calculateWeatherAdjustedCapacity(kecData) {
   });
   
   return { kecamatan: kecData.kecamatan, monthlyAdjustments: adjustments };
+}
+
+// ============================================
+// DISASTER & RISIKO BENCANA (Fitur 2)
+// ============================================
+
+/**
+ * Disaster Risk Score per kecamatan
+ * Bobot: Jumlah Longsor (60%), Curah Hujan Puncak (20%), Topografi (20%)
+ */
+export function calculateDisasterRiskScore(kecamatan, longsorData, cuacaData) {
+  if (!kecamatan || !longsorData) return null;
+  
+  const { totalLongsor, topografi } = longsorData;
+  const hujanPuncak = cuacaData ? Math.max(...cuacaData.map(d => d.curahHujan)) : 320;
+  
+  // Normalisasi faktor
+  const longsorScore = Math.min(100, (totalLongsor / 25) * 100);
+  const hujanScore = Math.min(100, (hujanPuncak / 320) * 100);
+  
+  const topografiScore = {
+    "Sangat Curam": 90,
+    "Curam": 70,
+    "Bergelombang": 40,
+    "Datar": 20
+  };
+  const topoScore = topografiScore[topografi] || 50;
+  
+  // Weighted composite
+  const riskScore = (longsorScore * 0.6) + (hujanScore * 0.2) + (topoScore * 0.2);
+  
+  let riskLevel, riskColor, riskIcon;
+  
+  if (riskScore >= 75) {
+    riskLevel = "Sangat Tinggi";
+    riskColor = "text-red-700";
+    riskIcon = "🔴";
+  } else if (riskScore >= 55) {
+    riskLevel = "Tinggi";
+    riskColor = "text-orange-600";
+    riskIcon = "🟠";
+  } else if (riskScore >= 35) {
+    riskLevel = "Sedang";
+    riskColor = "text-amber-600";
+    riskIcon = "🟡";
+  } else {
+    riskLevel = "Rendah";
+    riskColor = "text-emerald-700";
+    riskIcon = "🟢";
+  }
+  
+  return {
+    kecamatan,
+    riskScore: Math.round(riskScore),
+    riskLevel,
+    riskColor,
+    riskIcon,
+    longsorCount: totalLongsor,
+    topografi,
+    recommendedAction: riskScore >= 75 
+      ? "Hindari musim hujan, cek kondisi jalan secara berkala"
+      : riskScore >= 55
+        ? "Waspada musim hujan, siapkan rute alternatif"
+        : "Relatif aman, tetap waspada saat hujan lebat"
+  };
+}
+
+/**
+ * Safe Season Calculator - bulan dengan risiko longsor terendah
+ */
+export function getSafeSeason(kecamatan) {
+  const bulanNama = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const rainyDaysPattern = [18, 17, 16, 12, 8, 5, 3, 3, 4, 9, 14, 18];
+  
+  // Bulan dengan hari hujan ≤ 5 = risiko longsor minimal
+  const safeMonths = rainyDaysPattern
+    .map((days, idx) => ({ bulan: bulanNama[idx], rainyDays: days }))
+    .filter(d => d.rainyDays <= 5)
+    .map(d => ({
+      bulan: d.bulan,
+      rainyDays: d.rainyDays,
+      risk: "Aman",
+      icon: "✅"
+    }));
+  
+  const moderateMonths = rainyDaysPattern
+    .map((days, idx) => ({ bulan: bulanNama[idx], rainyDays: days }))
+    .filter(d => d.rainyDays > 5 && d.rainyDays <= 10)
+    .map(d => ({
+      bulan: d.bulan,
+      rainyDays: d.rainyDays,
+      risk: "Perlu Waspada",
+      icon: "⚠️"
+    }));
+  
+  const highRiskMonths = rainyDaysPattern
+    .map((days, idx) => ({ bulan: bulanNama[idx], rainyDays: days }))
+    .filter(d => d.rainyDays > 10)
+    .map(d => ({
+      bulan: d.bulan,
+      rainyDays: d.rainyDays,
+      risk: "Risiko Tinggi",
+      icon: "🚨"
+    }));
+  
+  return {
+    kecamatan,
+    safeMonths,
+    moderateMonths,
+    highRiskMonths
+  };
+}
+
+/**
+ * Destination Risk Assessment - per destinasi wisata
+ */
+export function getDestinationRisk(destinasi, kecamatanLongsorData) {
+  if (!destinasi || !kecamatanLongsorData) return null;
+  
+  const { totalLongsor, topografi } = kecamatanLongsorData;
+  const riskScore = Math.min(100, (totalLongsor / 25) * 100);
+  
+  return {
+    nama: destinasi.nama,
+    kecamatan: destinasi.kecamatan,
+    riskScore: Math.round(riskScore),
+    riskLevel: riskScore >= 75 ? "Sangat Tinggi" : riskScore >= 55 ? "Tinggi" : riskScore >= 35 ? "Sedang" : "Rendah",
+    longsorCount: totalLongsor,
+    topografi,
+    safeSeason: "Jul-Aug (musim kemarau)",
+    alert: riskScore >= 55 ? "⚠️ Zona rawan longsor, cek kondisi jalan" : "✅ Relatif aman"
+  };
 }
