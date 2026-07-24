@@ -76,6 +76,7 @@ import { AdditionalDestinationsView } from "./components/AdditionalDestinationsV
 import { AdvancedAnalyticsView } from "./components/AdvancedAnalyticsView";
 import SmartWeatherView from "./components/SmartWeatherView";
 import DisasterRiskView from "./components/DisasterRiskView";
+import UMKMTrackerView from "./components/UMKMTrackerView";
 import {
   dataAkomodasi,
   kalenderEvent,
@@ -123,6 +124,7 @@ function App() {
     { key: "opendata", label: "Wisata Lainnya", icon: Database },
     { key: "weather", label: "Smart Weather", icon: CloudSun },
     { key: "disaster", label: "Bencana & Risiko", icon: AlertTriangle },
+    { key: "umkm", label: "Ekonomi & UMKM", icon: ShoppingCart },
   ];
 
   const handlePrintRecommendations = () => {
@@ -951,6 +953,12 @@ function App() {
         {activeTab === "disaster" && (
           <Suspense fallback={<div className="p-8 bg-white border border-slate-200 rounded-xl text-center font-mono text-xs font-semibold">Memuat Disaster Risk Dashboard...</div>}>
             <DisasterRiskView />
+          </Suspense>
+        )}
+
+        {activeTab === "umkm" && (
+          <Suspense fallback={<div className="p-8 bg-white border border-slate-200 rounded-xl text-center font-mono text-xs font-semibold">Memuat UMKM Dashboard...</div>}>
+            <UMKMTrackerView />
           </Suspense>
         )}
         </div>

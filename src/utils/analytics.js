@@ -469,3 +469,75 @@ export function getDestinationRisk(destinasi, kecamatanLongsorData) {
     alert: riskScore >= 55 ? "⚠️ Zona rawan longsor, cek kondisi jalan" : "✅ Relatif aman"
   };
 }
+
+// ============================================
+// EKONOMI KREATIF & UMKM (Fitur 3)
+// ============================================
+
+/**
+ * Economic Impact Score per kecamatan
+ * Bobot: Koperasi (30%), Pasar (25%), Sarana Dagang (25%), Tenaga Kerja (20%)
+ */
+export function calculateUMKMEconomicImpact(koperasi, pasar, saranaDagang, tenagaKerja, potensiWisata) {
+  // Normalisasi faktor (0-100)
+  const koperasiScore = Math.min(100, (koperasi / 50) * 100);
+  const pasarScore = Math.min(100, (pasar / 5) * 100);
+  const dagangScore = Math.min(100, (saranaDagang / 120) * 100);
+  const tenagaScore = Math.min(100, (tenagaKerja / 850) * 100);
+  
+  // Weighted composite
+  const impactScore = (koperasiScore * 0.3) + (pasarScore * 0.25) + (dagangScore * 0.25) + (tenagaScore * 0.2);
+  
+  // Estimasi economic impact
+  const wisataMultiplier = 2.4;
+  const estimatedImpact = potensiWisata * 275000 * wisataMultiplier;
+  
+  let impactLevel, impactColor;
+  
+  if (impactScore >= 75) {
+    impactLevel = "Sangat Tinggi";
+    impactColor = "text-emerald-700";
+  } else if (impactScore >= 55) {
+    impactLevel = "Tinggi";
+    impactColor = "text-blue-700";
+  } else if (impactScore >= 35) {
+    impactLevel = "Sedang";
+    impactColor = "text-amber-700";
+  } else {
+    impactLevel = "Rendah";
+    impactColor = "text-slate-600";
+  }
+  
+  return {
+    impactScore: Math.round(impactScore),
+    impactLevel,
+    impactColor,
+    estimatedImpact: Math.round(estimatedImpact / 1000000) + " Juta",
+    multiplier: wisataMultiplier,
+    priority: impactScore >= 75 ? "Tinggi" : impactScore >= 55 ? "Sedang" : "Rendah"
+  };
+}
+
+/**
+ * UMKM Growth Rate per tahun
+ */
+export function getUMKMgrowthRate(dataTahunan) {
+  if (!dataTahunan || dataTahunan.length < 2) return null;
+  
+  const lastYear = dataTahunan[dataTahunan.length - 1];
+  const prevYear = dataTahunan[dataTahunan.length - 2];
+  
+  const umkmGrowth = ((lastYear.umkm - prevYear.umkm) / prevYear.umkm * 100).toFixed(1);
+  const kunjunganGrowth = ((lastYear.kunjungan - prevYear.kunjungan) / prevYear.kunjungan * 100).toFixed(1);
+  const padGrowth = ((lastYear.pad - prevYear.pad) / prevYear.pad * 100).toFixed(1);
+  
+  return {
+    tahun: lastYear.tahun,
+    umkmGrowth: parseFloat(umkmGrowth),
+    kunjunganGrowth: parseFloat(kunjunganGrowth),
+    padGrowth: parseFloat(padGrowth),
+    umkmTotal: lastYear.umkm,
+    kunjunganTotal: lastYear.kunjungan,
+    padTotal: lastYear.pad
+  };
+}
