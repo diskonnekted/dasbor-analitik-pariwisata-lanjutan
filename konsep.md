@@ -26,3 +26,12 @@
 - Rekomendasi pengembangan destinasi
 - Kalender event wisata
 - Peta rute wisata tematik
+
+Domain Name
+pariwisata.sistemdata.id
+Site User
+sisteriwisata
+The main SSH User for the site.
+Site User Password
+4cXXGcNZOVLNzuYWQrO9
+Generate new password

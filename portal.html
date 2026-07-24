@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PORTAL ANALISA DATA DAERAH</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23141414'/><rect x='6' y='18' width='4' height='8' rx='1' fill='%2338BDF8'/><rect x='12' y='13' width='4' height='13' rx='1' fill='%232563EB'/><rect x='18' y='8' width='4' height='18' rx='1' fill='%2316A34A'/><path d='M6 15L13 9L18 12L25 5' stroke='%23F59E0B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/><path d='M21 5H25V9' stroke='%23F59E0B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&family=Playfair+Display:ital,wght@0,400;1,400;1,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --hd: #141414;
+      --canvas: #f1f1ef;
+      --muted: #747474;
+      --muted2: #949494;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--canvas);
+      color: var(--hd);
+      font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+      background-image:
+        linear-gradient(rgba(20,20,20,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20,20,20,0.035) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .font-mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; }
+    .font-serif { font-family: "Playfair Display", Georgia, serif; }
+
+    .border-hd { border: 1px solid var(--hd); }
+    .border-hd-2 { border: 2px solid var(--hd); }
+    .border-hd-subtle { border: 1px solid rgba(20,20,20,0.12); }
+    .shadow-hd { box-shadow: 2px 2px 0 0 var(--hd); }
+    .shadow-hd-lg { box-shadow: 4px 4px 0 0 var(--hd); }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* Header */
+    header.site {
+      background: #fff;
+      border-bottom: 2px solid var(--hd);
+      position: sticky; top: 0; z-index: 40;
+    }
+    header.site .inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 16px 20px; max-width: 1200px; margin: 0 auto;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand .mark {
+      width: 42px; height: 42px; background: var(--hd);
+      display: flex; align-items: center; justify-content: center;
+      padding: 5px; box-shadow: 3px 3px 0 0 rgba(20,20,20,0.25);
+    }
+    .brand h1 {
+      font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 15px;
+      text-transform: uppercase; letter-spacing: 0.12em; margin: 0; line-height: 1.2;
+    }
+    .brand p {
+      font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.18em; margin: 2px 0 0;
+    }
+    .clock {
+      font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--hd);
+      border: 1px solid var(--hd); padding: 6px 12px; background: var(--canvas);
+    }
+
+    /* Hero */
+    .hero { padding: 44px 0 20px; }
+    .kicker {
+      font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.28em; color: var(--muted);
+      display: inline-block; border: 1px solid var(--hd); padding: 4px 10px; background: #fff;
+    }
+    .hero h2 {
+      font-family: "Playfair Display", serif; font-style: italic; font-weight: 600;
+      font-size: clamp(30px, 5vw, 52px); line-height: 1.05; margin: 16px 0 10px; letter-spacing: -0.01em;
+    }
+    .hero .lead {
+      max-width: 640px; font-size: 15px; line-height: 1.6; color: #333; margin: 0;
+    }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 28px 0 8px; border: 2px solid var(--hd); background: #fff; }
+    .stat { padding: 18px 16px; border-right: 1px solid rgba(20,20,20,0.12); }
+    .stat:last-child { border-right: none; }
+    .stat .num { font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 34px; letter-spacing: -0.03em; line-height: 1; }
+    .stat .lbl { font-family: "JetBrains Mono", monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); margin-top: 8px; }
+    .stat .num.blue { color: #2563eb; }
+    .stat .num.amber { color: #b45309; }
+
+    /* Section label */
+    .section-head { display: flex; align-items: center; gap: 14px; margin: 40px 0 18px; }
+    .section-head .tag {
+      font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.16em; background: var(--hd); color: #fff; padding: 6px 12px;
+    }
+    .section-head .rule { flex: 1; height: 2px; background: var(--hd); }
+
+    /* Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; }
+
+    .card {
+      position: relative; background: #fff; border: 1px solid var(--hd);
+      box-shadow: 2px 2px 0 0 var(--hd); padding: 20px; display: flex; flex-direction: column; gap: 14px;
+      text-decoration: none; color: inherit; transition: transform .12s ease, box-shadow .12s ease;
+      cursor: pointer;
+    }
+    .card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--hd); }
+    .card.planned { background: #faf9f7; }
+    .card.planned::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(45deg, transparent, transparent 9px, rgba(20,20,20,0.03) 9px, rgba(20,20,20,0.03) 10px);
+    }
+
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-top .icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--hd); background: transparent; border: none; box-shadow: none;
+      padding: 0; margin: 0;
+    }
+    .svg-icon {
+      width: 26px; height: 26px; stroke: var(--hd); stroke-width: 2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.15s ease, transform 0.15s ease;
+    }
+    .card.active-link:hover .svg-icon { stroke: #2563eb; transform: scale(1.1); }
+
+    .idx { font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 11px; color: var(--muted2); letter-spacing: 0.1em; }
+    .card h3 {
+      font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 15px;
+      text-transform: uppercase; letter-spacing: 0.04em; margin: 0; line-height: 1.25;
+    }
+    .card p.desc { font-size: 13px; line-height: 1.55; color: #444; margin: 0; flex: 1; }
+
+    .badge {
+      font-family: "JetBrains Mono", monospace; font-size: 9px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.14em; padding: 4px 8px; border: 1px solid; white-space: nowrap;
+    }
+    .badge.active { color: #166534; background: #f0fdf4; border-color: #16a34a; }
+    .badge.plan { color: #b45309; background: #fffbeb; border-color: #d97706; }
+    .badge.prio { color: #b91c1c; background: #fef2f2; border-color: #dc2626; }
+
+    .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid rgba(20,20,20,0.12); padding-top: 12px; }
+    .url { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .go {
+      font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.12em; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .card.active-link .go { color: #2563eb; }
+    .card.planned .go { color: #b45309; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .dot.live { background: #16a34a; animation: ping 1.6s ease-in-out infinite; }
+    .dot.progress-dot { background: #d97706; }
+    @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,.5); } 70% { box-shadow: 0 0 0 6px rgba(22,163,74,0); } 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); } }
+
+    /* Neo-Brutalist Pop-up Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(20, 20, 20, 0.7);
+      backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .modal-box {
+      background: #fff; border: 2px solid var(--hd); box-shadow: 6px 6px 0 0 var(--hd);
+      width: 100%; max-width: 500px; padding: 0; overflow: hidden;
+      transform: translateY(10px); transition: transform 0.2s ease;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+
+    .modal-header {
+      background: var(--hd); color: #fff; padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 2px solid var(--hd);
+    }
+    .modal-header h3 {
+      font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.12em; margin: 0; color: #fff; display: flex; align-items: center; gap: 10px;
+    }
+    .modal-close {
+      background: #fff; color: var(--hd); border: 1px solid var(--hd);
+      font-family: "JetBrains Mono", monospace; font-weight: 800; font-size: 14px;
+      width: 28px; height: 28px; display: grid; place-items: center; cursor: pointer;
+      box-shadow: 2px 2px 0 0 var(--hd); transition: transform 0.1s ease;
+    }
+    .modal-close:hover { transform: translate(-1px, -1px); }
+
+    .modal-content { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+
+    .modal-alert {
+      background: #fffbeb; border: 1px solid #d97706; padding: 14px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .modal-alert .alert-icon { display: flex; align-items: center; justify-content: center; }
+    .modal-alert h4 {
+      font-family: "JetBrains Mono", monospace; font-size: 13px; font-weight: 800;
+      color: #92400e; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .modal-alert p { font-size: 12px; color: #b45309; margin: 0; line-height: 1.5; }
+
+    .modal-domain-tag {
+      font-family: "JetBrains Mono", monospace; font-size: 11px;
+      background: var(--canvas); border: 1px solid var(--hd); padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-domain-tag span.lbl { color: var(--muted); font-size: 10px; text-transform: uppercase; }
+    .modal-domain-tag span.url-val { font-weight: 800; color: #2563eb; }
+
+    .modal-features { display: flex; flex-direction: column; gap: 8px; }
+    .modal-features h5 {
+      font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin: 0 0 4px;
+    }
+    .modal-features ul { margin: 0; padding-left: 18px; font-size: 13px; color: #333; line-height: 1.6; }
+
+    .modal-foot { display: flex; justify-content: flex-end; gap: 10px; padding-top: 8px; }
+    .btn-brutal {
+      font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em; padding: 8px 16px; border: 1px solid var(--hd);
+      background: var(--hd); color: #fff; cursor: pointer; box-shadow: 2px 2px 0 0 var(--hd);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-brutal:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--hd); }
+
+    /* Footer */
+    footer.site { border-top: 2px solid var(--hd); margin-top: 56px; background: var(--hd); color: #E4E3E0; }
+    footer.site .inner { max-width: 1200px; margin: 0 auto; padding: 22px 20px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+    footer.site .fm { font-family: "JetBrains Mono", monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted2); }
+
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid rgba(20,20,20,0.12); }
+    }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div class="inner">
+      <div class="brand">
+        <div class="mark">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%;">
+            <rect x="6" y="18" width="4" height="8" rx="1" fill="#38BDF8"/>
+            <rect x="12" y="13" width="4" height="13" rx="1" fill="#2563EB"/>
+            <rect x="18" y="8" width="4" height="18" rx="1" fill="#16A34A"/>
+            <path d="M6 15L13 9L18 12L25 5" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 5H25V9" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Portal Analisa Data</h1>
+          <p>Sistem Informasi Pembangunan Daerah</p>
+        </div>
+      </div>
+      <div class="clock" id="clock">--:--:--</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <span class="kicker">Data Driven Governance</span>
+      <h2>Satu portal, seluruh sektor pembangunan.</h2>
+      <p class="lead">Kumpulan aplikasi analisa data lintas sektor untuk mendukung perencanaan berbasis bukti. Aplikasi berstatus <strong>AKTIF</strong> siap digunakan; sisanya berada dalam roadmap pembangunan.</p>
+
+      <div class="stats">
+        <div class="stat"><div class="num">16</div><div class="lbl">Total Modul</div></div>
+        <div class="stat"><div class="num blue">8</div><div class="lbl">Aktif</div></div>
+        <div class="stat"><div class="num amber">8</div><div class="lbl">Rencana</div></div>
+        <div class="stat"><div class="num">15</div><div class="lbl">Sektor Data</div></div>
+      </div>
+    </section>
+
+    <!-- Application Grid Active -->
+    <div class="section-head">
+      <span class="tag">Aplikasi Aktif</span>
+      <span class="rule"></span>
+    </div>
+
+    <div class="grid">
+      <!-- PERTANIAN & PANGAN (aktif) -->
+      <a class="card active-link" href="https://pertanian.sistemdata.id" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c0-3 1.5-5 5-6 2.5 4 1 6-1 7"/><path d="M14 20c0-3-1.5-5-5-6-2.5 4-1 6 1 7"/><path d="M12 20V10"/><path d="M12 10c0-3 2-4 5-4 1 3-1 4-5 4Z"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">PRIORITAS 01</div>
+          <h3>Analisa Pertanian &amp; Pangan</h3>
+        </div>
+        <p class="desc">Crop mapping, prediksi panen, food security index, volatilitas harga, dan optimasi rantai pasok.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> pertanian.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+
+      <!-- KEMISKINAN (aktif) -->
+      <a class="card active-link" href="https://kemiskinan.sistemdata.id" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">PRIORITAS 02</div>
+          <h3>Analisa Kemiskinan</h3>
+        </div>
+        <p class="desc">Pemetaan, clustering, prediksi dan simulasi kemiskinan per kecamatan. Terhubung data BPS &amp; bantuan sosial.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> kemiskinan.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+
+      <!-- KESEHATAN (aktif) -->
+      <a class="card active-link" href="https://kesehatan.sistemdata.id" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">MODUL 01</div>
+          <h3>Analisa Kesehatan</h3>
+        </div>
+        <p class="desc">Sebaran fasilitas kesehatan, tren AKI/AKB, heatmap stunting, rasio dokter-penduduk, dan alert dini wabah.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> kesehatan.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+
+      <!-- PENDIDIKAN (aktif) -->
+      <a class="card active-link" href="https://pendidikan.sistemdata.id" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">MODUL 02</div>
+          <h3>Analisa Pendidikan</h3>
+        </div>
+        <p class="desc">Sebaran sekolah, rasio guru-murid, prediksi putus sekolah, indeks pendidikan, dan distribusi guru.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> pendidikan.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+
+      <!-- INFRASTRUKTUR DESA (aktif) -->
+      <a class="card active-link" href="https://infrastruktur.sistemdata.id" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">MODUL 04</div>
+          <h3>Analisa Infrastruktur Desa</h3>
+        </div>
+        <p class="desc">Kondisi jalan, akses listrik/air, priority scoring, dan realisasi dana desa.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> infrastruktur.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+
+      <!-- KETENAGAKERJAAN (aktif) -->
+      <a class="card active-link" href="https://ketenagakerjaan.sistemdata.id" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">MODUL 06</div>
+          <h3>Analisa Ketenagakerjaan</h3>
+        </div>
+        <p class="desc">Tren pengangguran, skills gap, matching lowongan, dan prediksi pasar kerja.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> ketenagakerjaan.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+
+      <!-- UMKM & EKONOMI LOKAL (aktif) -->
+      <a class="card active-link" href="/" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M2 20h20"/><path d="M4 20V10l4 2V10l4 2V10l8 4v6"/><path d="M18 14v6"/><path d="M14 16v4"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">MODUL 07</div>
+          <h3>Analisa UMKM &amp; Ekonomi Lokal</h3>
+        </div>
+        <p class="desc">Klaster UMKM 80+ industri, kinerja koperasi, business survival rate, financing gap, dan value chain mapping.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> umkm.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+
+      <!-- PARIWISATA (aktif) -->
+      <a class="card active-link" href="https://pariwisata.sistemdata.id" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          </div>
+          <span class="badge active">AKTIF</span>
+        </div>
+        <div>
+          <div class="idx">MODUL 03</div>
+          <h3>Analisa Pariwisata</h3>
+        </div>
+        <p class="desc">Sebaran objek wisata, visitor flow, economic multiplier, cagar budaya, dan peluang investasi pariwisata.</p>
+        <div class="card-foot">
+          <span class="url"><span class="dot live"></span> pariwisata.sistemdata.id</span>
+          <span class="go">Buka &rarr;</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Application Grid Planned / On Progress -->
+    <div class="section-head">
+      <span class="tag">Roadmap Pembangunan (On Progress)</span>
+      <span class="rule"></span>
+    </div>
+
+    <div class="grid" id="planned-grid"></div>
+
+    <!-- Premium Dashboard Category -->
+    <div class="section-head">
+      <span class="tag" style="background: #7c3aed; color: white;">Premium Dashboard</span>
+      <span class="rule" style="background: #7c3aed;"></span>
+    </div>
+
+    <div class="grid">
+      <!-- PARIWISATA ADVANCED (aktif) -->
+      <a class="card active-link" href="https://pariwisatav2.sistemdata.id" target="_blank" rel="noopener" style="border-color: #7c3aed; box-shadow: 2px 2px 0 0 #7c3aed;">
+        <div class="card-top">
+          <div class="icon">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="stroke: #7c3aed;"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          </div>
+          <span class="badge active" style="color: #7c3aed; background: #f5f3ff; border-color: #7c3aed;">PREMIUM</span>
+        </div>
+        <div>
+          <div class="idx" style="color: #7c3aed;">ANALYTICS v2</div>
+          <h3>Pariwisata Advanced</h3>
+        </div>
+        <p class="desc">Analisis sebaran geospasial interaktif, jejaring rute jalan raya cerdas (OSRM), clustering dinamis wisata desa, dan visualisasi investor makro.</p>
+        <div class="card-foot" style="border-top-color: rgba(124, 58, 237, 0.15);">
+          <span class="url" style="color: #7c3aed;"><span class="dot live" style="background: #7c3aed; box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.5);"></span> pariwisatav2.sistemdata.id</span>
+          <span class="go" style="color: #7c3aed;">Buka &rarr;</span>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <!-- Neo-Brutalist Pop-up Modal: Sedang Dikerjakan / On Progress -->
+  <div class="modal-overlay" id="progress-modal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><span id="pm-icon-wrap" style="display:inline-flex;align-items:center;"></span> <span id="pm-title">NAMA MODUL</span></h3>
+        <button class="modal-close" id="modal-close-btn" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="modal-alert">
+          <div class="alert-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="#d97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div>
+            <h4>Sedang Dikerjakan / On Progress</h4>
+            <p id="pm-desc">Aplikasi ini saat ini dalam tahap pembangunan dan integrasi dataset daerah.</p>
+          </div>
+        </div>
+
+        <div class="modal-domain-tag">
+          <span class="lbl">TARGET DOMAIN:</span>
+          <span class="url-val" id="pm-domain">subdomain.sistemdata.id</span>
+        </div>
+
+        <div class="modal-features">
+          <h5>Fitur Analisa yang Sedang Dikembangkan:</h5>
+          <ul id="pm-features">
+            <li>Dashboard Spasial &amp; Visualisasi Interaktif</li>
+            <li>Indeks &amp; Predictive Analytics Sektor</li>
+          </ul>
+        </div>
+
+        <div class="modal-foot">
+          <button class="btn-brutal" id="modal-ok-btn">Mengerti / Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site">
+    <div class="inner">
+      <span class="fm">Portal Analisa Data Daerah &copy; 2026</span>
+      <span class="fm">Neo-Industrial Design System &bull; sistemdata.id</span>
+    </div>
+  </footer>
+
+  <script>
+    // Live clock
+    (function () {
+      var el = document.getElementById('clock');
+      function tick() {
+        var d = new Date();
+        var p = function (n) { return String(n).padStart(2, '0'); };
+        el.textContent = p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+      }
+      tick(); setInterval(tick, 1000);
+    })();
+
+    // SVG Icons Dictionary for Analytics
+    var iconsMap = {
+      bencana: '<svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+      kependudukan: '<svg class="svg-icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+      spbe: '<svg class="svg-icon" viewBox="0 0 24 24"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7 12 2"/></svg>',
+      sanitasi: '<svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>',
+      transportasi: '<svg class="svg-icon" viewBox="0 0 24 24"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h20"/><path d="M4 18v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2"/><path d="M16 18v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2"/><path d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12H3V6z"/><circle cx="6.5" cy="15.5" r="1.5"/><circle cx="17.5" cy="15.5" r="1.5"/></svg>',
+      lingkungan: '<svg class="svg-icon" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.1 2 7 0 4.4-3.6 8-8 8h-2z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>',
+      pariwisata: '<svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>',
+      hukum: '<svg class="svg-icon" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h18"/></svg>',
+      terintegrasi: '<svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>'
+    };
+
+    // Planned modules (roadmap) with consistent sistemdata.id domains
+    var planned = [
+      {
+        i: '05',
+        iconKey: 'bencana',
+        title: 'Bencana & Mitigasi',
+        domain: 'bencana.sistemdata.id',
+        desc: 'Peta rawan bencana, risk assessment, jalur evakuasi, dan early warning longsor.',
+        prio: true,
+        features: [
+          'Peta rawan bencana tanah longsor & banjir',
+          'Vulnerability mapping kelompok masyarakat rentan',
+          'Optimasi jalur evakuasi interaktif',
+          'System early warning prediksi tanah longsor'
+        ]
+      },
+      {
+        i: '08',
+        iconKey: 'kependudukan',
+        title: 'Kependudukan',
+        domain: 'kependudukan.sistemdata.id',
+        desc: 'Piramida penduduk, kepadatan, proyeksi populasi, dan dependency ratio.',
+        prio: false,
+        features: [
+          'Piramida demografi interaktif per kecamatan',
+          'Proyeksi pertumbuhan penduduk 5-10 tahun',
+          'Analisa bonus demografi & dependency ratio',
+          'Analisa arus migrasi penduduk'
+        ]
+      },
+      {
+        i: '09',
+        iconKey: 'spbe',
+        title: 'Kinerja Pemerintahan',
+        domain: 'spbe.sistemdata.id',
+        desc: 'Skor SPBE per OPD, efisiensi anggaran, dan deteksi risiko pengadaan.',
+        prio: false,
+        features: [
+          'Skor SPBE & ranking kinerja OPD',
+          'Tracking serapan & efisiensi anggaran real-time',
+          'Deteksi risiko pengadaan barang & jasa',
+          'Analisa sentimen pengaduan masyarakat'
+        ]
+      },
+      {
+        i: '10',
+        iconKey: 'sanitasi',
+        title: 'Air Bersih & Sanitasi',
+        domain: 'sanitasi.sistemdata.id',
+        desc: 'Cakupan air bersih, status ODF, water stress index, dan kualitas air.',
+        prio: false,
+        features: [
+          'Peta cakupan air bersih PDAM & sumur',
+          'Tracking status Open Defecation Free (ODF)',
+          'Water stress index per desa/kecamatan',
+          'Korelasi sanitasi dengan tingkat kesehatan'
+        ]
+      },
+      {
+        i: '11',
+        iconKey: 'transportasi',
+        title: 'Transportasi',
+        domain: 'transportasi.sistemdata.id',
+        desc: 'Jaringan jalan, blackspot kecelakaan, optimasi trayek, dan indeks aksesibilitas.',
+        prio: false,
+        features: [
+          'Pemetaan titik rawan kecelakaan (blackspot)',
+          'Optimasi rute trayek angkutan umum',
+          'Indeks aksesibilitas desa ke pusat layanan',
+          'Prediksi titik kemacetan lalu lintas'
+        ]
+      },
+      {
+        i: '12',
+        iconKey: 'lingkungan',
+        title: 'Lingkungan Hidup',
+        domain: 'lingkungan.sistemdata.id',
+        desc: 'Tutupan lahan, deteksi deforestasi, serapan karbon, dan pengelolaan sampah.',
+        prio: false,
+        features: [
+          'Deteksi perubahan tutupan hutan & lahan',
+          'Estimasi potensi serapan karbon',
+          'Optimasi rute pengangkutan sampah TPS',
+          'Monitoring kualitas air & udara'
+        ]
+      },
+      {
+        i: '14',
+        iconKey: 'hukum',
+        title: 'Hukum & Peradilan',
+        domain: 'hukum.sistemdata.id',
+        desc: 'Statistik perkara, divorce hotspot, case backlog, dan akses layanan hukum.',
+        prio: false,
+        features: [
+          'Statistik peradilan & divorce hotspot',
+          'Analisa tunggakan perkara (case backlog)',
+          'Monitoring akses bantuan hukum desa',
+          'Tren jenis perkara tahunan'
+        ]
+      },
+      {
+        i: '15',
+        iconKey: 'terintegrasi',
+        title: 'Data Terintegrasi',
+        domain: 'terintegrasi.sistemdata.id',
+        desc: 'Super app cross-sector, composite index (IPM lokal), dan scenario planning.',
+        prio: true,
+        features: [
+          'Analisa korelasi lintas sektor (Kemiskinan, Pendidikan, Kesehatan)',
+          'Komposit Indeks Pembangunan Manusia (IPM) lokal',
+          'Scenario planning kebijakan dampak anggaran',
+          'Multi-dimension predictive machine learning'
+        ]
+      }
+    ];
+
+    // Render Planned Cards
+    var grid = document.getElementById('planned-grid');
+    grid.innerHTML = planned.map(function (m, idx) {
+      var prioBadge = m.prio ? '<span class="badge prio">PRIORITAS</span>' : '<span class="badge plan">ON PROGRESS</span>';
+      var iconSvg = iconsMap[m.iconKey] || '';
+      return '' +
+        '<div class="card planned" onclick="openProgressModal(' + idx + ')">' +
+          '<div class="card-top"><div class="icon">' + iconSvg + '</div>' + prioBadge + '</div>' +
+          '<div><div class="idx">MODUL ' + m.i + '</div><h3>' + m.title + '</h3></div>' +
+          '<p class="desc">' + m.desc + '</p>' +
+          '<div class="card-foot">' +
+            '<span class="url"><span class="dot progress-dot"></span> ' + m.domain + '</span>' +
+            '<span class="go">Cek Status &rarr;</span>' +
+          '</div>' +
+        '</div>';
+    }).join('');
+
+    // Modal elements
+    var modalOverlay = document.getElementById('progress-modal');
+    var modalCloseBtn = document.getElementById('modal-close-btn');
+    var modalOkBtn = document.getElementById('modal-ok-btn');
+    var pmIconWrap = document.getElementById('pm-icon-wrap');
+    var pmTitle = document.getElementById('pm-title');
+    var pmDesc = document.getElementById('pm-desc');
+    var pmDomain = document.getElementById('pm-domain');
+    var pmFeatures = document.getElementById('pm-features');
+
+    window.openProgressModal = function(idx) {
+      var m = planned[idx];
+      if (!m) return;
+      pmIconWrap.innerHTML = iconsMap[m.iconKey] || '';
+      pmTitle.textContent = m.title;
+      pmDesc.textContent = m.desc;
+      pmDomain.textContent = m.domain;
+
+      pmFeatures.innerHTML = m.features.map(function(f) {
+        return '<li>' + f + '</li>';
+      }).join('');
+
+      modalOverlay.classList.add('open');
+    };
+
+    function closeModal() {
+      modalOverlay.classList.remove('open');
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalOkBtn.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('open')) closeModal();
+    });
+  </script>
+</body>
+</html>

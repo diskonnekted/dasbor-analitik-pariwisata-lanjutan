@@ -81,12 +81,21 @@ cd /tmp/dasbor-analitik-pariwisata && git pull && npm run build && cp -r dist/* 
 
 ## ❓ Troubleshooting & Catatan Penting
 
-1. **Routing 404 pada Refresh Halaman (Single Page App)**:
+1. **Optimasi Performa & CPU Server (Pre-compressed Gzip & Brotli)**:
+   Proyek ini telah dikonfigurasi untuk menghasilkan file terkompresi `.gz` dan `.br` secara otomatis saat proses build (`npm run build`). Agar Nginx di CloudPanel langsung menyajikan file terkompresi tanpa membebani CPU server untuk kompresi dinamis, tambahkan konfigurasi berikut pada **Vhost / Nginx Configuration** di dashboard CloudPanel Anda:
+   ```nginx
+   # Aktifkan pencarian file static .gz dan .br
+   gzip_static on;
+   brotli_static on; # jika modul brotli terpasang di server
+   ```
+   *Catatan: Hal ini akan mempercepat loading aset JS berukuran besar (seperti Chart & Leaflet) dari ratusan KB menjadi hanya belasan/puluhan KB.*
+
+2. **Routing 404 pada Refresh Halaman (Single Page App)**:
    Jika saat me-refresh halaman selain home terjadi error 404, di CloudPanel buka **Sites** → Domain Anda → **Vhost** / **Nginx Configuration**, lalu pastikan baris `try_files` terkonfigurasi:
    ```nginx
    location / {
        try_files $uri $uri/ /index.html;
    }
    ```
-2. **Tanpa Sudo**:
+3. **Tanpa Sudo**:
    Karena aplikasi disajikan sebagai *Static HTML/JS*, Nginx di CloudPanel akan langsung melayani file tersebut dengan performa maksimal, penggunaan memori RAM server 0 MB, dan **100% tanpa membutuhkan perintah sudo**.

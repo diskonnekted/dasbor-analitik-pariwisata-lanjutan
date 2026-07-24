@@ -1,73 +1,304 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&family=Playfair+Display:ital,wght@0,400;1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Utilities inti gaya hard-edge / neo-brutalist */
+/* ============================================
+   SaaS Analytics Design Tokens
+   ============================================ */
+
+/* Primary Colors */
+:root {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+
+  /* Slate / Neutral */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  /* Accent Colors */
+  --color-accent-amber-50: #fffbeb;
+  --color-accent-amber-100: #fef3c7;
+  --color-accent-amber-400: #fbbf24;
+  --color-accent-amber-500: #f59e0b;
+  --color-accent-amber-600: #d97706;
+  --color-accent-amber-700: #b45309;
+  --color-accent-amber-800: #92400e;
+
+  --color-accent-emerald-50: #ecfdf5;
+  --color-accent-emerald-100: #d1fae5;
+  --color-accent-emerald-500: #10b981;
+  --color-accent-emerald-600: #059669;
+  --color-accent-emerald-700: #047857;
+  --color-accent-emerald-800: #065f46;
+
+  --color-accent-red-50: #fef2f2;
+  --color-accent-red-100: #fee2e2;
+  --color-accent-red-400: #f87171;
+  --color-accent-red-500: #ef4444;
+  --color-accent-red-600: #dc2626;
+  --color-accent-red-700: #b91c1c;
+
+  --color-accent-purple-50: #f5f3ff;
+  --color-accent-purple-100: #ede9fe;
+  --color-accent-purple-500: #8b5cf6;
+  --color-accent-purple-600: #7c3aed;
+
+  /* Soft shadows (SaaS style) */
+  --shadow-soft-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-soft-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-soft-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-soft-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+  /* Blue accent shadow */
+  --shadow-blue: 0 2px 4px 0 rgba(37, 99, 235, 0.2);
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+
+/* ============================================
+   Modern Utility Classes
+   ============================================ */
 @layer utilities {
-  .border-hd {
-    border: 1px solid #141414;
+  /* Card with soft shadow and rounded corners */
+  .card-modern {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
-  .border-hd-2 {
-    border: 2px solid #141414;
+  .card-modern-hover:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
   }
-  .border-hd-subtle {
-    border: 1px solid rgba(20, 20, 20, 0.15);
+
+  /* Subtle gradient backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   }
-  .shadow-hd {
-    box-shadow: 2px 2px 0px 0px #141414;
+  .gradient-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
   }
-  .shadow-hd-lg {
-    box-shadow: 4px 4px 0px 0px #141414;
+
+  /* Subtle border utilities */
+  .border-subtle {
+    border: 1px solid #e2e8f0;
   }
-  .shadow-hd-blue {
-    box-shadow: 3px 3px 0px 0px #2563eb;
+  .border-subtle-light {
+    border: 1px solid #f1f5f9;
+  }
+
+  /* Pill badge base */
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .badge-primary {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  .badge-emerald {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  .badge-amber {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  .badge-red {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .badge-slate {
+    background: #f1f5f9;
+    color: #475569;
+  }
+
+  /* Glow effect for active states */
+  .glow-primary {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   }
 }
 
-/* Leaflet Custom Styling Override for Neo-Brutalist look */
+/* ============================================
+   Leaflet Map Modern Styling
+   ============================================ */
 .leaflet-container {
-  font-family: var(--font-mono);
-  background: #e5e7eb;
+  font-family: var(--font-sans);
+  background: #f1f5f9;
+  border-radius: 12px;
 }
 
 .leaflet-popup-content-wrapper {
-  border-radius: 0px !important;
-  border: 2px solid #141414 !important;
-  box-shadow: 3px 3px 0px 0px #141414 !important;
+  border-radius: var(--radius-md) !important;
+  border: none !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
   padding: 0px !important;
   background: #ffffff !important;
 }
 
 .leaflet-popup-content {
   margin: 0px !important;
+  font-family: var(--font-sans);
 }
 
 .leaflet-popup-tip-container {
   display: none;
 }
 
-/* Custom Scrollbar */
+.leaflet-control-zoom a {
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+  border-radius: var(--radius-sm) !important;
+  background: white !important;
+  color: #1e293b !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 600 !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--color-slate-50) !important;
+}
+
+/* ============================================
+   Custom Scrollbar (SaaS style)
+   ============================================ */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1ef;
+  background: var(--color-slate-100);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #141414;
+  background: var(--color-slate-300);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-slate-400);
 }
 
+/* ============================================
+   Animations
+   ============================================ */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* ============================================
+   Table Modern Styling
+   ============================================ */
+table.modern-table {
+  width: 100%;
+  font-size: 12px;
+  text-align: left;
+}
+
+table.modern-table thead {
+  background: #f8fafc;
+  color: #64748b;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+table.modern-table thead th {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+table.modern-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: color 0.15s;
+}
+
+table.modern-table tbody tr:hover {
+  background: rgba(248, 250, 252, 0.5);
+}
+
+table.modern-table tbody td {
+  padding: 0.75rem 1rem;
+}
+
+/* ============================================
+   Input & Select Modern Styling
+   ============================================ */
+input.modern-input,
+select.modern-select {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 12px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s;
+}
+input.modern-input:focus,
+select.modern-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============================================
+   Recharts Custom Styling
+   ============================================ */
+.recharts-wrapper {
+  margin: 0 auto;
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 50;
 }
