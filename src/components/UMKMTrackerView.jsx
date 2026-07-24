@@ -104,40 +104,47 @@ export default function UMKMTrackerView() {
       </Panel>
 
       {/* Economic Impact Overview */}
-      {selectedImpact && (
-        <Panel title={`Dampak Ekonomi UMKM - ${selectedKecamatan}`} subtitle="Kalkulasi berdasarkan koperasi, pasar, sarana dagang & tenaga kerja">
+      {selectedImpact && (() => {
+        const kecData = umkmPerKecamatan.find(k => k.kecamatan === selectedKecamatan);
+        return (
+        <Panel title={`Dampak Ekonomi UMKM - ${selectedKecamatan}`} subtitle="Evaluasi 4 indikator: jumlah koperasi, pasar, sarana dagang, dan tenaga kerja">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white border-2 border-emerald-200 rounded-xl p-4 text-center">
-              <div className="flex justify-center mb-2">
-                <Store className="w-8 h-8 text-emerald-500" />
-              </div>
+              <Store className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
               <p className={`text-2xl font-bold ${selectedImpact.impactColor}`}>{selectedImpact.impactLevel}</p>
-              <p className="text-xs text-slate-500 mt-1">Dampak Ekonomi</p>
+              <p className="text-xs text-slate-500 mt-1 mb-2">Level Dampak</p>
+              <div className="text-[10px] text-slate-600 bg-emerald-50 p-2 rounded-lg">
+                Berdasarkan bobot koperasi(30%) + pasar(25%) + dagang(25%) + tenaga kerja(20%)
+              </div>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
-              <div className="flex justify-center mb-2">
-                <TrendingUp className="w-8 h-8 text-blue-500" />
-              </div>
+              <TrendingUp className="w-8 h-8 text-blue-500 mx-auto mb-2" />
               <p className="text-2xl font-bold text-slate-800">{selectedImpact.impactScore}/100</p>
-              <p className="text-xs text-slate-500 mt-1">Impact Score</p>
+              <p className="text-xs text-slate-500 mt-1 mb-2">Impact Score</p>
+              <div className="text-[10px] text-slate-600 bg-blue-50 p-2 rounded-lg">
+                Score {selectedImpact.impactScore >= 75 ? "Sangat tinggi — prioritas pembinaan" : selectedImpact.impactScore >= 55 ? "Tinggi — potensi berkembang" : "Sedang/Rendah — butuh pengembangan"}
+              </div>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
-              <div className="flex justify-center mb-2">
-                <DollarSign className="w-8 h-8 text-amber-500" />
-              </div>
+              <DollarSign className="w-8 h-8 text-amber-500 mx-auto mb-2" />
               <p className="text-xl font-bold text-slate-800">{selectedImpact.estimatedImpact}</p>
-              <p className="text-xs text-slate-500 mt-1">Ekonomi Estimasi</p>
+              <p className="text-xs text-slate-500 mt-1 mb-2">Estimasi Ekonomi</p>
+              <div className="text-[10px] text-slate-600 bg-amber-50 p-2 rounded-lg">
+                Potensi wis: {kecData?.potensiWisata?.toLocaleString() || 0} × multiplier 2.4x
+              </div>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
-              <div className="flex justify-center mb-2">
-                <Users className="w-8 h-8 text-purple-500" />
+              <Users className="w-8 h-8 text-purple-500 mx-auto mb-2" />
+              <p className="text-2xl font-bold text-slate-800">{kecData?.tenagaKerja || 0}</p>
+              <p className="text-xs text-slate-500 mt-1 mb-2">Tenaga Kerja UMKM</p>
+              <div className="text-[10px] text-slate-600 bg-purple-50 p-2 rounded-lg">
+                {kecData?.koperasi || 0} koperasi + {kecData?.pasar || 0} pasar aktif
               </div>
-              <p className="text-2xl font-bold text-slate-800">{umkmPerKecamatan.find(k => k.kecamatan === selectedKecamatan)?.tenagaKerja || 0}</p>
-              <p className="text-xs text-slate-500 mt-1">Tenaga Kerja</p>
             </div>
           </div>
         </Panel>
-      )}
+        );
+      })()}
 
       {/* Ranking UMKM Impact */}
       <Panel title="Ranking Dampak Ekonomi UMKM" subtitle="Score berdasarkan jumlah koperasi, pasar, sarana dagang & tenaga kerja">
@@ -296,7 +303,12 @@ export default function UMKMTrackerView() {
       </Panel>
 
       {/* Sektor UMKM Pariwisata */}
-      <Panel title="Sektor UMKM Berbasis Pariwisata" subtitle="Distribusi UMKM berdasarkan ketergantungannya pada sektor wisata">
+      <Panel 
+        title="Sektor UMKM Berbasis Pariwisata" 
+        subtitle="6 sektor utama yang bergantung pada pariwisata — dependency score menunjukkan seberapa besar pendapatan sektor ini dari wisatawan">
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+          <strong>💡 Insight:</strong> Sektor dengan dependency tinggi (&gt;80%) paling terdampak fluktuasi kunjungan wisatawan. Diversifikasi pasar domestik & mancanegara penting untuk mitigasi risiko.
+        </div>
         <div className="grid md:grid-cols-3 gap-4">
           {[
             { sector: "Kuliner & Minuman", count: 45, icon: "🍜", description: "Warung, restoran, dawet, kuliner khas", dependency: 95 },
@@ -332,7 +344,12 @@ export default function UMKMTrackerView() {
       </Panel>
 
       {/* Multiplier Effect Calculator */}
-      <Panel title="Tourism Economic Multiplier Effect" subtitle="Estimasi dampak ekonomi pariwisata terhadap UMKM lokal">
+      <Panel 
+        title="Tourism Economic Multiplier Effect" 
+        subtitle="Proyeksi dampak ekonomi 4 indikator utama pariwisata Banjarnegara 2025 — setiap angka menunjukkan pertumbuhan vs tahun sebelumnya">
+        <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-800">
+          <strong>📊 Penjelasan:</strong> Multiplier 2.4x artinya setiap Rp1 yang dikeluarkan wisatawan masuk ke ekonomi lokal akan berputar 2.4x melalui rantai pasok UMKM (akomodasi → kuliner → transport → souvenir).
+        </div>
         <div className="grid md:grid-cols-4 gap-4">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-5 text-center">
             <DollarSign className="w-10 h-10 text-blue-600 mx-auto mb-3" />
@@ -362,7 +379,12 @@ export default function UMKMTrackerView() {
       </Panel>
 
       {/* UMKM Near Destinations */}
-      <Panel title="Kepadatan UMKM per Destinasi Wisata" subtitle="Jumlah UMKM dalam radius 5km dari objek wisata utama">
+      <Panel 
+        title="Kepadatan UMKM per Destinasi Wisata" 
+        subtitle="Jumlah UMKM dalam radius 5km dari 8 objek wisata utama — tinggi = peluang ekonomi wisata kuat, rendah = butuh pembinaan">
+        <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+          <strong>🗺️ Catatan:</strong> Data estimasi berdasarkan survei lapangan. Rasio tinggi (UMKM banyak per wisatawan) menandakan sektor souvenir/kuliner berkembang, rasio rendah menunjukkan potensi UMKM belum optimal.
+        </div>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={[
@@ -401,7 +423,12 @@ export default function UMKMTrackerView() {
       </Panel>
 
       {/* Tourism Spending Distribution */}
-      <Panel title="Distribusi Pengeluaran Wisatawan per Sektor UMKM" subtitle="Estimasi sebaran budget wisatawan ke UMKM lokal">
+      <Panel 
+        title="Distribusi Pengeluaran Wisatawan per Sektor UMKM" 
+        subtitle="Persentase budget wisatawan yang masuk ke masing-masing sektor UMKM — akomodasi & kuliner dominan">
+        <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-800">
+          <strong>💰 Analisa:</strong> Akomodasi (32%) dan Kuliner (25%) mendominasi pengeluaran. Peluang pengembangan: souvenir & tiket rekreasi masih bisa ditingkatkan melalui program promosi dan packaging produk.
+        </div>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
