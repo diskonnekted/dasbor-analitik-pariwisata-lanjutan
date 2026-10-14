@@ -1,6 +1,5 @@
 import {
   X,
-  MapPin,
   CheckCircle2,
   AlertTriangle,
   Bus,
@@ -255,7 +254,7 @@ const DESTINASI_DISCLAIMERS = {
     ]
   },
   "OW-08": {
-    judul: "💡 Catatan Pokdarwis Desa (Tampomas):",
+    judul: "💡 Catatan Pengelolaan Desa Wisata (Tampomas):",
     poin: [
       "Merupakan danau buatan bekas tambang batu Mrica yang dikelola oleh Pokdarwis Desa Pagelak.",
       "Sebagian besar pendapatan retribusi tiket dikelola untuk pembangunan kas desa (APBDes) dan operasional lokal."
@@ -311,11 +310,19 @@ export function DestinasiDetailModal({ item, onClose }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
               <span className="text-[10px] text-slate-500 font-semibold uppercase block">Pengunjung / Thn</span>
-              <span className="font-bold text-sm text-slate-900">{formatNumber(item.pengunjung)}</span>
+              {item.pengunjung > 0 ? (
+                <span className="font-bold text-sm text-slate-900">{formatNumber(item.pengunjung)}</span>
+              ) : (
+                <span className="font-bold text-sm text-slate-400 italic">Belum terdata</span>
+              )}
             </div>
             <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
               <span className="text-[10px] text-slate-500 font-semibold uppercase block">Kontribusi PAD</span>
-              <span className="font-bold text-sm text-emerald-700">{formatShortRupiah(item.padTahunan)}</span>
+              {item.padTahunan > 0 ? (
+                <span className="font-bold text-sm text-emerald-700">{formatShortRupiah(item.padTahunan)}</span>
+              ) : (
+                <span className="font-bold text-sm text-slate-400 italic">Belum terdata</span>
+              )}
             </div>
             <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
               <span className="text-[10px] text-slate-500 font-semibold uppercase block">Tiket Masuk</span>

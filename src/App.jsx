@@ -474,13 +474,21 @@ function App() {
                             {item.desa}, Kec. {item.kecamatan}
                           </td>
                           <td className="text-center font-semibold text-slate-900">
-                            {formatNumber(item.pengunjung)}
+                            {item.pengunjung > 0 ? (
+                              formatNumber(item.pengunjung)
+                            ) : (
+                              <span className="text-slate-400 italic font-normal">Belum terdata</span>
+                            )}
                           </td>
                           <td className="text-center text-primary-700 font-semibold">
                             {item.tiket ? formatRupiah(item.tiket) : "Gratis"}
                           </td>
                           <td className="text-center font-semibold text-emerald-700">
-                            {formatShortRupiah(item.padTahunan)}
+                            {item.padTahunan > 0 ? (
+                              formatShortRupiah(item.padTahunan)
+                            ) : (
+                              <span className="text-slate-400 italic font-normal">Belum terdata</span>
+                            )}
                           </td>
                           <td className="text-center py-3 px-2">
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold ${capInfo.border} ${capInfo.bg} ${capInfo.color}`}>

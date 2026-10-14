@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import L from "leaflet";
+import { swapEsriBasemap } from "../utils/basemaps";
 import {
   Search,
   MapPin,
   ExternalLink,
-  Sparkles,
   Layers,
   TrendingUp,
   Tag,
@@ -121,6 +121,8 @@ export function AdditionalDestinationsView() {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersLayerGroupRef = useRef(null);
+  const basemapLayerRef = useRef(null);
+  const [basemapType, setBasemapType] = useState("street"); // 'street' | 'satellite'
   
   const [geoDataDesa, setGeoDataDesa] = useState(null);
   const villageLayerRef = useRef(null);
@@ -145,10 +147,6 @@ export function AdditionalDestinationsView() {
     });
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> | Open Data Banjarnegara',
-      maxZoom: 18,
-    }).addTo(map);
 
     // Track zoom level changes
     map.on("zoomend", () => {
@@ -163,8 +161,16 @@ export function AdditionalDestinationsView() {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
+      basemapLayerRef.current = null;
     };
   }, []);
+
+  // Attach/swap ESRI basemap (street / satellite)
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    basemapLayerRef.current = swapEsriBasemap(map, basemapLayerRef.current, basemapType);
+  }, [basemapType]);
 
   // Draw village boundaries on the map
   useEffect(() => {
@@ -590,11 +596,35 @@ export function AdditionalDestinationsView() {
           title="Peta Sebaran Destinasi Perdesaan & Spasial Clustering"
           subtitle="Titik-titik lokasi dikelompokkan secara cerdas berdasarkan klaster jarak spasial. Klik pada klaster angka untuk memperbesar."
         />
-        <div 
-          ref={mapRef} 
-          id="additional-destinations-map" 
-          className="w-full aspect-[4/3] max-h-[520px] rounded-lg border border-slate-200 mt-4 relative z-10 shadow-sm"
-        />
+        <div className="relative mt-4 z-10">
+          {/* Basemap toggle: ESRI street / satellite */}
+          <div className="absolute top-3 left-3 z-[1000] bg-white border border-slate-200 rounded-lg p-1.5 flex items-center gap-1.5 shadow-sm">
+            <span className="font-mono text-[9px] font-bold text-slate-500 uppercase px-1">
+              Basemap:
+            </span>
+            {[
+              { id: "street", label: "Esri Street" },
+              { id: "satellite", label: "Satelit" },
+            ].map((b) => (
+              <button
+                key={b.id}
+                onClick={() => setBasemapType(b.id)}
+                className={`font-mono text-[9px] font-bold uppercase px-2 py-1 rounded-md transition cursor-pointer ${
+                  basemapType === b.id
+                    ? "bg-slate-800 text-white"
+                    : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+                }`}
+              >
+                {b.label}
+              </button>
+            ))}
+          </div>
+          <div
+            ref={mapRef}
+            id="additional-destinations-map"
+            className="w-full aspect-[4/3] max-h-[520px] rounded-lg border border-slate-200 shadow-sm"
+          />
+        </div>
       </Panel>
 
       {/* Grid of Kecamatan & Beautiful Cards */}

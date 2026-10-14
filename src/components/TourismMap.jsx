@@ -3,6 +3,7 @@ import L from "leaflet";
 import { Layers, Compass, Info } from "lucide-react";
 import { kecamatanAnalytics, objekWisata, ruteWisataTematik } from "../data/pariwisataData";
 import { calculateTPS, formatNumber, formatShortRupiah } from "../utils/analytics";
+import { swapEsriBasemap } from "../utils/basemaps";
 
 function getTPSColor(score) {
   if (!score) return "#cbd5e1";
@@ -32,7 +33,9 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
   const [hoveredInfo, setHoveredInfo] = useState(null);
 
   const roadLayersGroupRef = useRef(null);
+  const basemapLayerRef = useRef(null);
   const [showRoads, setShowRoads] = useState(false);
+  const [basemapType, setBasemapType] = useState("street"); // 'street' | 'satellite'
   const [roadData, setRoadData] = useState({ nasional: null, provinsi: null, kabupaten: null });
 
   // Fetch road data once on load
@@ -78,10 +81,6 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
     });
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> | Open Data Banjarnegara',
-      maxZoom: 18,
-    }).addTo(map);
 
     markersGroupRef.current = L.layerGroup().addTo(map);
     routeLayerGroupRef.current = L.layerGroup().addTo(map);
@@ -91,8 +90,16 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
     return () => {
       map.remove();
       mapInstanceRef.current = null;
+      basemapLayerRef.current = null;
     };
   }, []);
+
+  // Attach/swap ESRI basemap (street / satellite)
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    basemapLayerRef.current = swapEsriBasemap(map, basemapLayerRef.current, basemapType);
+  }, [basemapType]);
 
   // Draw road networks dynamically
   useEffect(() => {
@@ -203,7 +210,7 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
     "Alam & Geo-Tourism": "🏔️",
     "Alam & Konservasi": "🌿",
     "Alam & Ekowisata": "🌲",
-    "Alam & Geothermai": "♨️",
+    "Alam & Geothermal": "♨️",
     "Budaya & Sejarah": "🏛️",
     "Desa Wisata & Budaya": "🎭",
     "Wisata Kuliner": "🍜",
@@ -320,11 +327,19 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; border-top:1px solid #f1f5f9; padding-top:8px; margin-bottom:10px;">
             <div style="background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #f1f5f9; text-align:center;">
               <div style="font-size:8px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;">Kunjungan</div>
-              <div style="font-size:11px; font-weight:700; color:#1e293b; font-family:monospace; margin-top:2px;">${formatNumber(item.pengunjung)} <span style="font-size:8px; font-weight:normal; color:#64748b;">/th</span></div>
+              ${
+                item.pengunjung > 0
+                  ? `<div style="font-size:11px; font-weight:700; color:#1e293b; font-family:monospace; margin-top:2px;">${formatNumber(item.pengunjung)} <span style="font-size:8px; font-weight:normal; color:#64748b;">/th</span></div>`
+                  : `<div style="font-size:10px; font-style:italic; color:#94a3b8; margin-top:3px;">Belum terdata</div>`
+              }
             </div>
             <div style="background:#f0fdf4; padding:6px; border-radius:6px; border:1px solid #dcfce7; text-align:center;">
               <div style="font-size:8px; color:#16a34a; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;">Retribusi PAD</div>
-              <div style="font-size:11px; font-weight:700; color:#15803d; font-family:monospace; margin-top:2px;">${formatShortRupiah(item.padTahunan)}</div>
+              ${
+                item.padTahunan > 0
+                  ? `<div style="font-size:11px; font-weight:700; color:#15803d; font-family:monospace; margin-top:2px;">${formatShortRupiah(item.padTahunan)}</div>`
+                  : `<div style="font-size:10px; font-style:italic; color:#94a3b8; margin-top:3px;">Belum terdata</div>`
+              }
             </div>
           </div>
 
@@ -478,6 +493,26 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
           <label htmlFor="show-roads" className="font-mono text-[9px] font-bold text-slate-700 uppercase cursor-pointer select-none">
             Jejaring Jalan
           </label>
+        </div>
+
+        <div className="flex items-center gap-1.5 ml-2 border-l border-slate-200 pl-2">
+          <span className="font-mono text-[9px] font-bold text-slate-500 uppercase">Basemap:</span>
+          {[
+            { id: "street", label: "Esri Street" },
+            { id: "satellite", label: "Satelit" },
+          ].map((b) => (
+            <button
+              key={b.id}
+              onClick={() => setBasemapType(b.id)}
+              className={`font-mono text-[9px] font-bold uppercase px-2 py-1 rounded-md transition cursor-pointer ${
+                basemapType === b.id
+                  ? "bg-slate-800 text-white"
+                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+              }`}
+            >
+              {b.label}
+            </button>
+          ))}
         </div>
       </div>
 
