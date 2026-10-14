@@ -78,6 +78,7 @@ import { AdvancedAnalyticsView } from "./components/AdvancedAnalyticsView";
 import SmartWeatherView from "./components/SmartWeatherView";
 import DisasterRiskView from "./components/DisasterRiskView";
 import UMKMTrackerView from "./components/UMKMTrackerView";
+import { MakroSektoralView } from "./components/MakroSektoralView";
 import {
   dataAkomodasi,
   kalenderEvent,
@@ -119,6 +120,7 @@ function App() {
   const tabs = [
     { key: "overview", label: "Dashboard Utama", icon: Layers },
     { key: "advanced", label: "Analisa Lanjutan", icon: TrendingUp },
+    { key: "makro", label: "Makro & Sektoral", icon: Activity },
     { key: "routes", label: "Peta Tematik", icon: RouteIcon },
     { key: "events", label: "Event & Rekomendasi", icon: Calendar },
     { key: "cagarbudaya", label: "Cagar Budaya", icon: Landmark },
@@ -951,6 +953,12 @@ function App() {
         {/* ==========================================
             TAB 07: WISATA OPENDATA
         =========================================== */}
+        {activeTab === "makro" && (
+          <Suspense fallback={<div className="p-8 bg-white border border-slate-200 rounded-xl text-center font-mono text-xs font-semibold">Memuat Data Makro dan Sektoral...</div>}>
+            <MakroSektoralView />
+          </Suspense>
+        )}
+
         {activeTab === "opendata" && (
           <Suspense fallback={<div className="p-8 bg-white border border-slate-200 rounded-xl text-center font-mono text-xs font-semibold">Memuat Wisata OpenData...</div>}>
             <AdditionalDestinationsView />
