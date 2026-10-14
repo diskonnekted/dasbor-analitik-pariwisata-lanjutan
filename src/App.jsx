@@ -89,6 +89,7 @@ import {
   seasonalityBulanan,
   trenKunjunganTahunan,
 } from "./data/pariwisataData";
+import { kunjunganTahunanKabupaten } from "./data/disparbudMasterData";
 import {
   calculateEconomicMultiplier,
   calculateTPS,
@@ -204,6 +205,12 @@ function App() {
 
   const totalPengunjungAll = useMemo(() => objekWisata.reduce((acc, curr) => acc + curr.pengunjung, 0), []);
   const totalPADAll = useMemo(() => objekWisata.reduce((acc, curr) => acc + curr.padTahunan, 0), []);
+
+  // Total kunjungan KABUPATEN 2024 (domestik + asing) - real DISPARBUD 7.2.1
+  const totalKunjunganKab2024 = useMemo(() => {
+    const t = kunjunganTahunanKabupaten.find((x) => x.tahun === 2024);
+    return t ? t.domestik + (t.mancanegara || 0) : totalPengunjungAll;
+  }, []);
   const avgOkupansiAkomodasi = useMemo(() => {
     const total = dataAkomodasi.reduce((acc, c) => acc + c.tpk, 0);
     return Math.round(total / dataAkomodasi.length);
@@ -353,8 +360,8 @@ function App() {
           <div className="space-y-6 animate-fade-in">
             {/* Stat Cards Row */}
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard label="Total Kunjungan Wisatawan" value={formatNumber(totalPengunjungAll)} sub="wisatawan domestik & mancanegara / thn" accent="blue" icon={Users} />
-              <StatCard label="Kontribusi Retribusi PAD" value={formatShortRupiah(totalPADAll)} sub="dari retribusi & pajak sektor wisata" accent="emerald" icon={DollarSign} />
+              <StatCard label="Kunjungan Wisatawan Kabupaten 2024" value={formatNumber(totalKunjunganKab2024)} sub="real DISPARBUD 2024 - domestik & mancanegara" accent="blue" icon={Users} />
+              <StatCard label="PAD Retribusi Objek Wisata" value={formatShortRupiah(totalPADAll)} sub="data 2017 (tahun terakhir DISPARBUD)" accent="emerald" icon={DollarSign} />
               <StatCard label="Tingkat Okupansi Akomodasi" value={`${avgOkupansiAkomodasi}%`} sub="rata-rata hunian hotel & homestay" accent="amber" icon={Activity} />
               <StatCard label="Objek Wisata Terdata" value={filteredObjekWisata.length} sub={`tersebar di ${metaPariwisata.totalKecamatan} kecamatan`} accent="purple" icon={MapPin} />
             </section>
@@ -382,8 +389,8 @@ function App() {
               <Panel>
                 <SectionTitle
                   index="02"
-                  title="Tren Kunjungan Wisatawan & PAD Multi-Tahun"
-                  subtitle="Perkembangan kunjungan wisatawan domestik vs mancanegara (2019-2025)."
+                  title="Tren Kunjungan Wisatawan Kabupaten (2016-2024)"
+                  subtitle="Realisasi kunjungan wisatawan per tahun - sumber: master data DISPARBUD. PAD retribusi objek hanya tersedia s.d. 2017."
                 />
                 <div className="h-[310px]">
                   <ResponsiveContainer width="100%" height="100%">
@@ -395,7 +402,7 @@ function App() {
                       <Tooltip content={<ChartTooltip formatter={(v) => formatNumber(v)} />} />
                       <Legend wrapperStyle={{ fontSize: 11, fontFamily: "Inter" }} />
                       <Bar yAxisId="left" dataKey="domestik" name="Wisatawan Domestik" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                      <Line yAxisId="right" dataKey="retribusiPAD" name="PAD Retribusi (Rp)" stroke="#059669" strokeWidth={2.5} dot={{ r: 4, fill: "#059669", strokeWidth: 2, stroke: "#fff" }} />
+                      <Line yAxisId="right" dataKey="mancanegara" name="Wisatawan Mancanegara" stroke="#f59e0b" strokeWidth={2.5} dot={{ r: 4, fill: "#f59e0b", strokeWidth: 2, stroke: "#fff" }} />
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
@@ -406,7 +413,7 @@ function App() {
                 <SectionTitle
                   index="03"
                   title="Ranking Objek Wisata Kontributor PAD Terbesar"
-                  subtitle="Destinasi wisata dengan retribusi pendapatan daerah tertinggi."
+                  subtitle="Pendapatan/retribusi objek wisata tahun 2017 - sumber: DISPARBUD (tahun terakhir tersedia)."
                 />
                 <div className="h-[310px]">
                   <ResponsiveContainer width="100%" height="100%">
@@ -475,7 +482,7 @@ function App() {
                           </td>
                           <td className="text-center font-semibold text-slate-900">
                             {item.pengunjung > 0 ? (
-                              formatNumber(item.pengunjung)
+                              formatNumber(item.pengunjung) + (item.pengunjungTahun && item.pengunjungTahun !== 2024 ? ` (${item.pengunjungTahun})` : "")
                             ) : (
                               <span className="text-slate-400 italic font-normal">Belum terdata</span>
                             )}
@@ -485,7 +492,7 @@ function App() {
                           </td>
                           <td className="text-center font-semibold text-emerald-700">
                             {item.padTahunan > 0 ? (
-                              formatShortRupiah(item.padTahunan)
+                              formatShortRupiah(item.padTahunan) + (item.padTahunanTahun ? ` (${item.padTahunanTahun})` : "")
                             ) : (
                               <span className="text-slate-400 italic font-normal">Belum terdata</span>
                             )}
@@ -624,7 +631,7 @@ function App() {
                       <XAxis dataKey="bulan" tick={{ fontSize: 11, fontFamily: "Inter" }} />
                       <YAxis tick={{ fontSize: 11, fontFamily: "Inter" }} />
                       <Tooltip content={<ChartTooltip formatter={(v) => `${formatNumber(v)} Orang`} />} />
-                      <Bar dataKey="kunjungan" name="Perkiraan Wisatawan" radius={[4, 4, 0, 0]}>
+                      <Bar dataKey="kunjungan" name="Kunjungan Wisatawan 2024" radius={[4, 4, 0, 0]}>
                         {seasonalityBulanan.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
@@ -644,15 +651,15 @@ function App() {
                   </div>
                   <div className="space-y-2 text-[11px] text-slate-600 leading-relaxed">
                     <p>
-                      • <b>Super Peak:</b> Bulan <b>Agustus (DCF)</b> & <b>Desember (Nataru)</b> mencapai puncak 245.000+ wisatawan/bulan.
+                      • <b>Super Peak:</b> <b>April</b> (257.013) & <b>Agustus</b> (240.508) menjadi puncak kunjungan wisatawan 2024.
                     </p>
                     <p>
-                      • <b>Low Season:</b> Bulan Maret (Pra-Ramadhan) & Februari mengalami penurunan hingga 72.000 wisatawan.
+                      • <b>Low Season:</b> <b>Maret</b> (81.389) & <b>November</b> (112.100) menjadi titik kunjungan terendah 2024.
                     </p>
                   </div>
                   <div className="p-2.5 bg-white border border-slate-200 rounded-lg text-[10px] space-y-1 text-slate-600">
                     <span className="font-semibold text-slate-800 block">Rekomendasi:</span>
-                    Penyelenggaraan event pengganti di bulan low-season (Maret/September) seperti Festival Dawet Ayu.
+                    Penyelenggaraan event pengganti di bulan low-season (Maret/November) seperti Festival Dawet Ayu.
                   </div>
                 </div>
               </div>

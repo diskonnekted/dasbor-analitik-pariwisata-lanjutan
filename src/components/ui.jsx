@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { formatNumber, formatRupiah, formatShortRupiah, getCarryingCapacityInfo } from "../utils/analytics";
+import { catatanObjekWisata } from "../data/disparbudMasterData";
 
 /* ============================================
    Header - SaaS Analytics Style
@@ -311,7 +312,7 @@ export function DestinasiDetailModal({ item, onClose }) {
             <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
               <span className="text-[10px] text-slate-500 font-semibold uppercase block">Pengunjung / Thn</span>
               {item.pengunjung > 0 ? (
-                <span className="font-bold text-sm text-slate-900">{formatNumber(item.pengunjung)}</span>
+                <span className="font-bold text-sm text-slate-900">{formatNumber(item.pengunjung)}{item.pengunjungTahun && item.pengunjungTahun !== 2024 ? <span className="text-[10px] text-slate-400 font-normal"> ({item.pengunjungTahun})</span> : null}</span>
               ) : (
                 <span className="font-bold text-sm text-slate-400 italic">Belum terdata</span>
               )}
@@ -319,7 +320,7 @@ export function DestinasiDetailModal({ item, onClose }) {
             <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
               <span className="text-[10px] text-slate-500 font-semibold uppercase block">Kontribusi PAD</span>
               {item.padTahunan > 0 ? (
-                <span className="font-bold text-sm text-emerald-700">{formatShortRupiah(item.padTahunan)}</span>
+                <span className="font-bold text-sm text-emerald-700">{formatShortRupiah(item.padTahunan)}{item.padTahunanTahun ? <span className="text-[10px] text-emerald-600 font-normal"> ({item.padTahunanTahun})</span> : null}</span>
               ) : (
                 <span className="font-bold text-sm text-slate-400 italic">Belum terdata</span>
               )}
@@ -337,6 +338,15 @@ export function DestinasiDetailModal({ item, onClose }) {
               </span>
               {DESTINASI_DISCLAIMERS[item.id].poin.map((p, idx) => (
                 <p key={idx}>• {p}</p>
+              ))}
+            </div>
+          )}
+
+          {catatanObjekWisata[item.id] && (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 text-[10px] rounded-lg leading-relaxed space-y-1 font-sans">
+              <span className="font-bold block uppercase tracking-wider text-[9px] text-emerald-800">Catatan Data DISPARBUD</span>
+              {catatanObjekWisata[item.id].map((p, idx) => (
+                <p key={idx}>&#8226; {p}</p>
               ))}
             </div>
           )}

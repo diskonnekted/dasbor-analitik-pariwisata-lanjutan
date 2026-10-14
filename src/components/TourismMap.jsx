@@ -329,7 +329,7 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
               <div style="font-size:8px; color:#94a3b8; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;">Kunjungan</div>
               ${
                 item.pengunjung > 0
-                  ? `<div style="font-size:11px; font-weight:700; color:#1e293b; font-family:monospace; margin-top:2px;">${formatNumber(item.pengunjung)} <span style="font-size:8px; font-weight:normal; color:#64748b;">/th</span></div>`
+                  ? `<div style="font-size:11px; font-weight:700; color:#1e293b; font-family:monospace; margin-top:2px;">${formatNumber(item.pengunjung)} ${item.pengunjungTahun && item.pengunjungTahun !== 2024 ? `<span style="font-size:8px; font-weight:normal; color:#64748b;">(${item.pengunjungTahun})</span> ` : ""}<span style="font-size:8px; font-weight:normal; color:#64748b;">/th</span></div>`
                   : `<div style="font-size:10px; font-style:italic; color:#94a3b8; margin-top:3px;">Belum terdata</div>`
               }
             </div>
@@ -337,7 +337,7 @@ export function TourismMap({ onSelectDestinasi, selectedKecamatanFilter, activeR
               <div style="font-size:8px; color:#16a34a; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;">Retribusi PAD</div>
               ${
                 item.padTahunan > 0
-                  ? `<div style="font-size:11px; font-weight:700; color:#15803d; font-family:monospace; margin-top:2px;">${formatShortRupiah(item.padTahunan)}</div>`
+                  ? `<div style="font-size:11px; font-weight:700; color:#15803d; font-family:monospace; margin-top:2px;">${formatShortRupiah(item.padTahunan)}${item.padTahunanTahun ? ` <span style="font-size:8px; font-weight:normal; color:#16a34a;">(${item.padTahunanTahun})</span>` : ""}</div>`
                   : `<div style="font-size:10px; font-style:italic; color:#94a3b8; margin-top:3px;">Belum terdata</div>`
               }
             </div>
